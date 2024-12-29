@@ -1,68 +1,244 @@
-:root {
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
+/* Load a sleek font, e.g. "Poppins" or "Inter" */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
 
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
-
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-a:hover {
-  color: #535bf2;
-}
-
-body {
+* {
   margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+
+/* By default, no scroll on larger screens */
+html, body {
+  height: 100%;
+  background-color: #000;  /* Dark background */
+  font-family: 'Poppins', sans-serif;
+  color: #fff;
+  overflow: hidden; /* no scroll on larger screens */
+}
+
+/* 
+   MAIN WRAPPER
+   For desktop, fill the entire screen (no scroll).
+*/
+.home-container {
   display: flex;
-  place-items: center;
-  min-width: 320px;
-  min-height: 100vh;
+  width: 100%;
+  height: 100vh;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: center; /* Fill the viewport height */
 }
 
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
+/* LEFT COLUMN */
+.left-column {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  padding: 1rem;
 }
 
-button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
+/* Top portion: "IntervYOU", big heading, toggles */
+.left-top {
+  width: 95%;
+  height: 85%; 
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+
+}
+
+/* The main platform name */
+.platform-name {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #fff;
+}
+
+/* Big heading "POWERED BY..." */
+.big-heading {
+  font-size: 2rem;
+  font-weight: 600;
+  line-height: 1.2;
+  color: #eaeaea;
+  white-space: pre-line;
+}
+
+/* "Don't have an account?" text */
+.subtitle {
+  color: #ccc;
+  font-size: 1rem;
+}
+
+/* Toggle link for create or login */
+.toggle-link {
+  display: block;
+  background: none;
+  border: none;
+  margin-top: 0.5rem;
+  padding: 0;
+  color: #fff;
   font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
   cursor: pointer;
-  transition: border-color 0.25s;
+  text-decoration: underline;
+  text-align: left;
 }
-button:hover {
-  border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
+.toggle-link:hover {
+  color: #ccc;
 }
 
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
+/* Auth Box */
+.auth-box {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  justify-content: center;
+  align-items: center;
+  padding-bottom: 10px;
+}
+.header{
+  display: flex;
+  flex-direction: column;
+  gap:5rem;
+}
+.top-box{
+  display: flex;
+  gap: 2rem;
+  flex-direction: column;
+  padding-top: 50px;
+  
+}
+
+/* ABOUT US pinned to bottom align with right side container */
+.about-box { /* push to the bottom if there's extra space */
+  background-color: #1a1a1a;
+  border-radius: 10px;
+  padding: 2rem;
+  margin-top: auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 250px;
+
+;
+}
+.about-box h3 {
+  font-size: 1rem;
+  margin-bottom: 0.3rem;
+  font-weight: 600;
+  flex:2;
+}
+.about-box p {
+  font-size: 0.9rem;
+  line-height: 1.4;
+  color: #ccc;
+  flex: 5;
+}
+
+/* RIGHT COLUMN */
+.right-container {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  padding: 1rem;
+}
+
+/* Big tall rounded shape on right side */
+.rounded-bg {
+  width: 95%;
+  height: 85%; 
+  background-color: #1a1a1a;
+  border-radius: 30px;
+  box-shadow: 0 6px 15px rgba(0,0,0,0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 50px;
+}
+
+/* The smaller form box inside the big container */
+.form-box {
+  width: 320px;
+  background-color: #2a2a2a;
+  border-radius: 10px;
+  padding: 2rem;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.3);
+}
+
+.box-title {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+}
+
+/* Label left-aligned */
+.form-group {
+  margin-bottom: 1rem;
+}
+.form-group label {
+  display: block;
+  font-size: 0.85rem;
+  color: #ccc;
+  text-align: left;
+  margin-bottom: 0.3rem;
+}
+.form-group input {
+  width: 100%;
+  padding: 0.5rem;
+  border-radius: 4px;
+  border: 1px solid #444;
+  background-color: #1f1f1f;
+  color: #fff;
+  font-size: 0.9rem;
+}
+
+/* White text button with dark background */
+.submit-btn {
+  margin-top: 1rem;
+  width: 100%;
+  padding: 0.75rem;
+  background-color: #000;
+  color: #fff;
+  font-weight: 600;
+  border: 1px solid #333;
+  border-radius: 4px;
+  cursor: pointer;
+  text-align: center;
+}
+.submit-btn:hover {
+  background-color: #333;
+  border-color: #444;
+}
+
+/* 
+   RESPONSIVE 
+   On small screens, enable scrolling so content is not clipped.
+*/
+@media (max-width: 888px) {
+  html, body {
+    /* Allow scrolling on phone-sized viewports */
+    overflow-y: auto !important;
   }
-  a:hover {
-    color: #747bff;
+  .home-container {
+    flex-direction: column;
+    height: auto;
   }
-  button {
-    background-color: #f9f9f9;
+  .rounded-bg {
+    width: 95%;
+    height: auto;
+    border-radius: 20px;
+    padding: 2rem;
+  }
+  .form-box {
+    width: 90%;
+    max-width: 400px;
   }
 }
