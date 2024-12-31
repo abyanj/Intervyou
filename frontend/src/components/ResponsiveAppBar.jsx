@@ -36,7 +36,7 @@ function ResponsiveAppBar() {
     if (page === 'Upgrade') {
       alert('Upgrade page not implemented yet');
     } else if (page === 'How It Works?') {
-      alert('How It Works not implemented yet');
+      navigate('/how-it-works');
     }
   };
 
@@ -55,7 +55,7 @@ function ResponsiveAppBar() {
 
   return (
     <AppBar
-      position="static"
+      position="sticky"
       sx={{
         backgroundColor: '#000', // Set navbar to black
         color: '#fff', // Ensure text/icons remain white
@@ -77,7 +77,9 @@ function ResponsiveAppBar() {
               letterSpacing: '.1rem',
               color: 'inherit',
               textDecoration: 'none',
+              cursor: 'pointer',  
             }}
+            onClick={() => navigate('/dashboard')}
           >
             IntervYOU
           </Typography>
