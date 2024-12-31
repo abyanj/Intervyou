@@ -1,61 +1,94 @@
-require('dotenv').config(); 
+const { app } = require("@azure/functions");
+const axios = require("axios");
 
-const axios = require('axios');
-
-module.exports = async function (context, req) {
-  const { prompt } = req.body;
-
-  if (!prompt) {
+app.http("generateQuestions", {
+  methods: ["POST"],
+  authLevel: "anonymous",
+  handler: async (request, context) => {
     context.res = {
-      status: 400,
-      body: 'Missing prompt in request body',
-    };
-    return;
-  }
-
-  const azureEndpoint = process.env.AZURE_OPENAI_ENDPOINT;
-  const azureApiKey = process.env.AZURE_OPENAI_API_KEY;
-  console.log('Azure Endpoint:', process.env.AZURE_OPENAI_ENDPOINT);
-  console.log('Azure API Key:', process.env.AZURE_OPENAI_API_KEY);
-
-
-  if (!azureEndpoint || !azureApiKey) {
-    context.res = {
-      status: 500,
-      body: 'Azure OpenAI endpoint or API key is missing',
-    };
-    return;
-  }
-
-  try {
-    const response = await axios.post(
-      azureEndpoint,
-      {
-        prompt: prompt,
-        max_tokens: 500,
-        temperature: 0.7,
-        n: 1,
-        stop: null,
+      headers: {
+        "Access-Control-Allow-Origin": "*", // Replace * with specific origin in production
+        "Access-Control-Allow-Methods": "POST, OPTIONS",
+        "Access-Control-Allow-Headers": "Content-Type",
       },
-      {
-        headers: {
-          'Content-Type': 'application/json',
-          'api-key': azureApiKey,
+    };
+
+    if (request.method === "OPTIONS") {
+      // Handle CORS preflight
+      return {
+        status: 204,
+        headers: context.res.headers,
+      };
+    }
+
+    const body = await request.json();
+    const { level, positionName, jobDescription } = body;
+
+    if (!level || !positionName || !jobDescription) {
+      context.log("ERROR: Missing required fields in request body");
+      return {
+        status: 400,
+        body: {
+          error:
+            "Missing required fields: level, positionName, or jobDescription",
         },
-      }
-    );
+      };
+    }
 
-    const questions = response.data.choices[0]?.text.split('\n').filter((q) => q.trim() !== '');
+    const endpoint = process.env.AZURE_OPENAI_ENDPOINT;
+    const apiKey = process.env.AZURE_OPENAI_API_KEY;
 
-    context.res = {
-      status: 200,
-      body: { questions },
-    };
-  } catch (error) {
-    context.log('Error calling Azure OpenAI API:', error.message);
-    context.res = {
-      status: 500,
-      body: 'Failed to generate questions',
-    };
-  }
-};
+    if (!endpoint || !apiKey) {
+      context.log(
+        "ERROR: Azure OpenAI endpoint or API key is missing in environment variables"
+      );
+      return {
+        status: 500,
+        body: { error: "Azure OpenAI endpoint or API key is missing" },
+      };
+    }
+
+    const prompt = `For the following information, a ${level} ${positionName} position with the following description: ${jobDescription}. Generate only 3 questions with answers in JSON format, including fields for 'question' and 'answer', and nothing else.`;
+
+    try {
+      const response = await axios.post(
+        endpoint,
+        {
+          messages: [
+            {
+              role: "system",
+              content: "You are an AI generating interview questions.",
+            },
+            { role: "user", content: prompt },
+          ],
+          max_tokens: 500,
+          temperature: 0.7,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+            "api-key": apiKey,
+          },
+        }
+      );
+
+      const generatedContent = response.data.choices[0]?.message.content;
+      const mockResponse = generatedContent
+        .replace("```json", "")
+        .replace("```", "")
+        .trim();
+
+      context.log("Generated Mock Response:", mockResponse);
+      return { status: 200, body: mockResponse };
+    } catch (error) {
+      context.log("ERROR: Failed to call Azure OpenAI API:", error.message);
+      return {
+        status: 500,
+        body: {
+          error: "Failed to generate questions",
+          details: error.message,
+        },
+      };
+    }
+  },
+});
