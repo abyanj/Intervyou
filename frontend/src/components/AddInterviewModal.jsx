@@ -1,35 +1,43 @@
-import React, { useState, useEffect } from 'react';
-import PropTypes from 'prop-types';
-import { Modal, Box, Button, Typography, TextField, MenuItem } from '@mui/material';
+import { useState, useEffect } from "react";
+import PropTypes from "prop-types";
+import {
+  Modal,
+  Box,
+  Button,
+  Typography,
+  TextField,
+  MenuItem,
+  CircularProgress,
+} from "@mui/material";
 
-const levels = ['Intern', 'Junior', 'Intermediate', 'Senior', 'Senior+'];
+const levels = ["Intern", "Junior", "Intermediate", "Senior", "Senior+"];
 
-const AddInterviewModal = ({ onSubmit, open, onClose }) => {
-  const [positionName, setPositionName] = useState('');
-  const [jobDescription, setJobDescription] = useState('');
-  const [level, setLevel] = useState('');
+const AddInterviewModal = ({ onSubmit, open, onClose, isSubmitting }) => {
+  const [positionName, setPositionName] = useState("");
+  const [jobDescription, setJobDescription] = useState("");
+  const [level, setLevel] = useState("");
 
-  const isFormValid = positionName.trim() !== '' && jobDescription.trim() !== '' && level !== '';
+  const isFormValid =
+    positionName.trim() !== "" && jobDescription.trim() !== "" && level !== "";
 
   const handleSubmit = () => {
-    if (isFormValid) {
+    if (isFormValid && !isSubmitting) {
       onSubmit({ positionName, jobDescription, level });
-      handleClose(); // Reset fields after submission
     }
   };
 
   const handleClose = () => {
-    setPositionName('');
-    setJobDescription('');
-    setLevel('');
+    setPositionName("");
+    setJobDescription("");
+    setLevel("");
     onClose();
   };
 
   useEffect(() => {
     if (!open) {
-      setPositionName('');
-      setJobDescription('');
-      setLevel('');
+      setPositionName("");
+      setJobDescription("");
+      setLevel("");
     }
   }, [open]);
 
@@ -42,17 +50,17 @@ const AddInterviewModal = ({ onSubmit, open, onClose }) => {
     >
       <Box
         sx={{
-          position: 'absolute',
-          top: '50%',
-          left: '50%',
-          transform: 'translate(-50%, -50%)',
+          position: "absolute",
+          top: "50%",
+          left: "50%",
+          transform: "translate(-50%, -50%)",
           width: 400,
-          bgcolor: '#1f1f1f',
-          color: '#fff',
-          border: '2px solid #444',
+          bgcolor: "#1f1f1f",
+          color: "#fff",
+          border: "2px solid #444",
           boxShadow: 24,
           p: 4,
-          borderRadius: '10px',
+          borderRadius: "10px",
         }}
       >
         <Typography id="modal-title" variant="h6" component="h2">
@@ -70,12 +78,12 @@ const AddInterviewModal = ({ onSubmit, open, onClose }) => {
           value={positionName}
           onChange={(e) => setPositionName(e.target.value)}
           sx={{
-            input: { color: '#fff', backgroundColor: '#2a2a2a' },
-            label: { color: '#ccc' },
-            '& .MuiOutlinedInput-root': {
-              color: '#fff',
-              '& fieldset': { borderColor: '#444' },
-              '&:hover fieldset': { borderColor: '#666' },
+            input: { color: "#fff", backgroundColor: "#2a2a2a" },
+            label: { color: "#ccc" },
+            "& .MuiOutlinedInput-root": {
+              color: "#fff",
+              "& fieldset": { borderColor: "#444" },
+              "&:hover fieldset": { borderColor: "#666" },
             },
           }}
         />
@@ -88,14 +96,26 @@ const AddInterviewModal = ({ onSubmit, open, onClose }) => {
           multiline
           rows={3}
           value={jobDescription}
-          onChange={(e) => setJobDescription(e.target.value)}
+          onChange={(e) => {
+            const inputText = e.target.value;
+            const wordCount = inputText
+              .trim()
+              .split(/\s+/)
+              .filter(Boolean).length;
+            if (wordCount <= 50) {
+              setJobDescription(inputText);
+            }
+          }}
+          helperText={`${
+            jobDescription.trim().split(/\s+/).filter(Boolean).length
+          }/50 words`}
           sx={{
-            textarea: { color: '#fff' },
-            label: { color: '#ccc' },
-            '& .MuiOutlinedInput-root': {
-              color: '#fff',
-              '& fieldset': { borderColor: '#444' },
-              '&:hover fieldset': { borderColor: '#666' },
+            textarea: { color: "#fff" },
+            label: { color: "#ccc" },
+            "& .MuiOutlinedInput-root": {
+              color: "#fff",
+              "& fieldset": { borderColor: "#444" },
+              "&:hover fieldset": { borderColor: "#666" },
             },
           }}
         />
@@ -107,13 +127,13 @@ const AddInterviewModal = ({ onSubmit, open, onClose }) => {
           value={level}
           onChange={(e) => setLevel(e.target.value)}
           sx={{
-            marginTop: '1rem',
-            input: { color: '#fff', backgroundColor: '#2a2a2a' },
-            label: { color: '#ccc' },
-            '& .MuiOutlinedInput-root': {
-              color: '#fff',
-              '& fieldset': { borderColor: '#444' },
-              '&:hover fieldset': { borderColor: '#666' },
+            marginTop: "1rem",
+            input: { color: "#fff", backgroundColor: "#2a2a2a" },
+            label: { color: "#ccc" },
+            "& .MuiOutlinedInput-root": {
+              color: "#fff",
+              "& fieldset": { borderColor: "#444" },
+              "&:hover fieldset": { borderColor: "#666" },
             },
           }}
         >
@@ -124,14 +144,14 @@ const AddInterviewModal = ({ onSubmit, open, onClose }) => {
           ))}
         </TextField>
 
-        <Box sx={{ mt: 3, display: 'flex', justifyContent: 'space-between' }}>
+        <Box sx={{ mt: 3, display: "flex", justifyContent: "space-between" }}>
           <Button
             onClick={handleClose}
             variant="outlined"
             sx={{
-              borderColor: '#444',
-              color: '#fff',
-              '&:hover': { borderColor: '#666', backgroundColor: '#2a2a2a' },
+              borderColor: "#444",
+              color: "#fff",
+              "&:hover": { borderColor: "#666", backgroundColor: "#2a2a2a" },
             }}
           >
             Cancel
@@ -139,25 +159,36 @@ const AddInterviewModal = ({ onSubmit, open, onClose }) => {
           <Button
             onClick={handleSubmit}
             variant="contained"
-            disabled={!isFormValid}
+            disabled={!isFormValid || isSubmitting} // Disable while submitting
             sx={{
-              backgroundColor: isFormValid ? '#333' : '#555',
-              color: '#fff',
-              '&:hover': { backgroundColor: isFormValid ? '#444' : '#555' },
+              backgroundColor: isFormValid && !isSubmitting ? "#333" : "#555",
+              color: "#fff",
+              "&:hover": {
+                backgroundColor: isFormValid && !isSubmitting ? "#444" : "#555",
+              },
             }}
           >
-            Start Interview
+            {isSubmitting ? (
+              <CircularProgress size={24} sx={{ color: "#fff" }} />
+            ) : (
+              "Start Interview"
+            )}
           </Button>
         </Box>
       </Box>
     </Modal>
   );
 };
+
 AddInterviewModal.propTypes = {
   onSubmit: PropTypes.func.isRequired,
   open: PropTypes.bool.isRequired,
   onClose: PropTypes.func.isRequired,
+  isSubmitting: PropTypes.bool, // New prop for loader
+};
+
+AddInterviewModal.defaultProps = {
+  isSubmitting: false,
 };
 
 export default AddInterviewModal;
-
