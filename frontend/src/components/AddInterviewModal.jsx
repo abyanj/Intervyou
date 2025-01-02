@@ -169,7 +169,10 @@ const AddInterviewModal = ({ onSubmit, open, onClose, isSubmitting }) => {
             }}
           >
             {isSubmitting ? (
-              <CircularProgress size={24} sx={{ color: "#fff" }} />
+              <div>
+                <CircularProgress size={24} sx={{ color: "#fff" }} />
+                Generating Questions...
+              </div>
             ) : (
               "Start Interview"
             )}

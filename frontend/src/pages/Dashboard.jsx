@@ -112,24 +112,14 @@ function Dashboard() {
   };
   const handleDeleteInterview = async (interviewId) => {
     try {
-      const { error } = await apiService.deleteInterview(interviewId);
-
-      if (error) {
-        console.error("Error deleting interview:", error.message);
-        alert("Failed to delete the interview. Please try again.");
-        return;
-      }
+      await apiService.deleteInterview(interviewId);
 
       // Update the state to remove the deleted interview
       setMockInterviews((prev) =>
         prev.filter((interview) => interview.id !== interviewId)
       );
     } catch (error) {
-      console.error(
-        "Unexpected error while deleting interview:",
-        error.message
-      );
-      alert("Unexpected error occurred. Please try again.");
+      console.log(error);
     }
   };
 
@@ -140,8 +130,7 @@ function Dashboard() {
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          height: "100vh",
-          backgroundColor: "#0f0f0f",
+          backgroundColor: "#000",
           color: "#fff",
           flexDirection: "column",
         }}
@@ -175,14 +164,21 @@ function Dashboard() {
 
   return (
     <div>
-      <div style={{ backgroundColor: "#0f0f0f", color: "#fff" }}>
-        <div style={{ maxWidth: "1200px", margin: "0 auto", padding: "3rem" }}>
+      <div style={{ backgroundColor: "#000", color: "#fff" }}>
+        <div style={{ maxWidth: "1300px", margin: "0 auto", padding: "3rem" }}>
           <Typography variant="h4">
             Welcome, {profile?.first_name || "User"}!
           </Typography>
 
-          <Box sx={{ marginTop: "2rem" }}>
-            <Typography variant="h5">Create Your Mock Interview</Typography>
+          <Box
+            sx={{
+              marginTop: "2rem",
+              display: "flex",
+              flexDirection: "column",
+              gap: "1rem",
+            }}
+          >
+            <Typography variant="h5">Create Your Interview</Typography>
             <Box
               sx={{
                 display: "flex",
@@ -292,7 +288,7 @@ function Dashboard() {
                       </Typography>
                     </Box>
                     {/* Delete Button */}
-                    <Box sx={{ marginLeft: "1rem" }}>
+                    <Box sx={{ marginRight: "5rem" }}>
                       <Typography
                         variant="body2"
                         sx={{

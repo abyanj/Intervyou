@@ -100,14 +100,7 @@ const apiService = {
 
   async deleteInterview(interviewId) {
     try {
-      const { error } = await supabase
-        .from("mock_interviews")
-        .delete()
-        .eq("id", interviewId);
-      if (error) {
-        console.error("Error deleting interview from database:", error.message);
-        throw new Error("Failed to delete interview from database");
-      }
+      await supabase.from("mock_interviews").delete().eq("id", interviewId);
     } catch (error) {
       console.error("Unexpected error deleting interview:", error.message);
       throw error;

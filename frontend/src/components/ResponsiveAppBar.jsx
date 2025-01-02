@@ -1,55 +1,46 @@
-import * as React from 'react';
-import AppBar from '@mui/material/AppBar';
-import Box from '@mui/material/Box';
-import Toolbar from '@mui/material/Toolbar';
-import IconButton from '@mui/material/IconButton';
-import Typography from '@mui/material/Typography';
-import Menu from '@mui/material/Menu';
-import MenuIcon from '@mui/icons-material/Menu';
-import Container from '@mui/material/Container';
-import Avatar from '@mui/material/Avatar';
-import Button from '@mui/material/Button';
-import Tooltip from '@mui/material/Tooltip';
-import MenuItem from '@mui/material/MenuItem';
-import AdbIcon from '@mui/icons-material/Adb';
-import { useNavigate } from 'react-router-dom';
-import { supabase } from '../supabaseClient';
+import * as React from "react";
+import AppBar from "@mui/material/AppBar";
+import Box from "@mui/material/Box";
+import Toolbar from "@mui/material/Toolbar";
+import IconButton from "@mui/material/IconButton";
+import Typography from "@mui/material/Typography";
+import Menu from "@mui/material/Menu";
+import MenuIcon from "@mui/icons-material/Menu";
+import Container from "@mui/material/Container";
+import Avatar from "@mui/material/Avatar";
+import Button from "@mui/material/Button";
+import Tooltip from "@mui/material/Tooltip";
+import MenuItem from "@mui/material/MenuItem";
+import AdbIcon from "@mui/icons-material/Adb";
+import { useNavigate, useLocation } from "react-router-dom";
+import { supabase } from "../supabaseClient";
 
-const pages = ['Upgrade', 'How It Works?'];
-const settings = ['Profile', 'Logout'];
+const pages = ["Dashboard", "How It Works", "Upgrade"];
 
 function ResponsiveAppBar() {
   const navigate = useNavigate();
+  const location = useLocation();
 
   const [anchorElNav, setAnchorElNav] = React.useState(null);
-  const [anchorElUser, setAnchorElUser] = React.useState(null);
 
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
   };
-  const handleOpenUserMenu = (event) => {
-    setAnchorElUser(event.currentTarget);
+  const handleLogout = async () => {
+    const { error } = await supabase.auth.signOut();
+    if (!error) {
+      navigate("/");
+    }
   };
 
   const handleCloseNavMenu = (page) => {
     setAnchorElNav(null);
-    if (page === 'Upgrade') {
-      alert('Upgrade page not implemented yet');
-    } else if (page === 'How It Works?') {
-      navigate('/how-it-works');
-    }
-  };
-
-  const handleCloseUserMenu = async (setting) => {
-    setAnchorElUser(null);
-    if (setting === 'Logout') {
-      // perform Supabase signOut
-      const { error } = await supabase.auth.signOut();
-      if (!error) {
-        navigate('/');
-      }
-    } else if (setting === 'Profile') {
-      alert('Profile not implemented yet');
+    if (page === "Dashboard") {
+      navigate("/dashboard");
+    } else if (page === "Upgrade") {
+      navigate("/upgrade");
+    } else if (page === "How It Works") {
+      navigate("/how-it-works");
     }
   };
 
@@ -57,35 +48,35 @@ function ResponsiveAppBar() {
     <AppBar
       position="sticky"
       sx={{
-        backgroundColor: '#000', // Set navbar to black
-        color: '#fff', // Ensure text/icons remain white
+        backgroundColor: "#000", // Set navbar to black
+        color: "#fff", // Ensure text/icons remain white
       }}
     >
       <Container maxWidth="xl">
         <Toolbar disableGutters>
           {/* Desktop Logo */}
-          <AdbIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} />
+          <AdbIcon sx={{ display: { xs: "none", md: "flex" }, mr: 1 }} />
           <Typography
             variant="h6"
             noWrap
             component="div"
             sx={{
               mr: 2,
-              display: { xs: 'none', md: 'flex' },
-              fontFamily: 'monospace',
+              display: { xs: "none", md: "flex" },
+              fontFamily: "monospace",
               fontWeight: 700,
-              letterSpacing: '.1rem',
-              color: 'inherit',
-              textDecoration: 'none',
-              cursor: 'pointer',  
+              letterSpacing: ".1rem",
+              color: "inherit",
+              textDecoration: "none",
+              cursor: "pointer",
             }}
-            onClick={() => navigate('/dashboard')}
+            onClick={() => navigate("/dashboard")}
           >
             IntervYOU
           </Typography>
 
           {/* Mobile Menu Icon */}
-          <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
+          <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>
             <IconButton
               size="large"
               onClick={handleOpenNavMenu}
@@ -96,78 +87,127 @@ function ResponsiveAppBar() {
             {/* Mobile menu items */}
             <Menu
               anchorEl={anchorElNav}
-              anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
-              transformOrigin={{ vertical: 'top', horizontal: 'left' }}
+              anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
+              transformOrigin={{ vertical: "top", horizontal: "left" }}
               open={Boolean(anchorElNav)}
-              onClose={() => handleCloseNavMenu()}
-              sx={{ display: { xs: 'block', md: 'none' } }}
+              onClose={() => setAnchorElNav(null)}
+              sx={{ display: { xs: "block", md: "none" } }}
             >
-              {pages.map((page) => (
-                <MenuItem key={page} onClick={() => handleCloseNavMenu(page)}>
-                  <Typography textAlign="center">{page}</Typography>
-                </MenuItem>
-              ))}
+              {pages.map((page) => {
+                const normalizedPage = page.toLowerCase().replace(/\s+/g, "-");
+                const isActive = location.pathname.includes(normalizedPage);
+                return (
+                  <MenuItem
+                    key={page}
+                    onClick={() => handleCloseNavMenu(page)}
+                    sx={{
+                      color: isActive ? "#BB86FC" : "inherit",
+                      fontWeight: isActive ? "bold" : "normal",
+                    }}
+                  >
+                    <Typography textAlign="center">{page}</Typography>
+                  </MenuItem>
+                );
+              })}
             </Menu>
           </Box>
 
           {/* Mobile Logo */}
-          <AdbIcon sx={{ display: { xs: 'flex', md: 'none' }, mr: 1 }} />
+          <AdbIcon sx={{ display: { xs: "flex", md: "none" }, mr: 1 }} />
           <Typography
             variant="h5"
             noWrap
             component="div"
             sx={{
               mr: 2,
-              display: { xs: 'flex', md: 'none' },
+              display: { xs: "flex", md: "none" },
               flexGrow: 1,
-              fontFamily: 'monospace',
+              fontFamily: "monospace",
               fontWeight: 700,
-              letterSpacing: '.1rem',
-              color: 'inherit',
-              textDecoration: 'none',
+              letterSpacing: ".1rem",
+              color: "inherit",
+              textDecoration: "none",
             }}
           >
             IntervYOU
           </Typography>
 
           {/* Desktop pages */}
-          <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
-            {pages.map((page) => (
-              <Button
-                key={page}
-                onClick={() => handleCloseNavMenu(page)}
-                sx={{ my: 2, color: 'white', display: 'block' }}
-              >
-                {page}
-              </Button>
-            ))}
+          <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
+            {pages.map((page) => {
+              const normalizedPage = page.toLowerCase().replace(/\s+/g, "-");
+              console.log(location.pathname, normalizedPage);
+              const isActive = location.pathname.includes(normalizedPage);
+              return (
+                <Button
+                  key={page}
+                  onClick={() => handleCloseNavMenu(page)}
+                  sx={{
+                    color: isActive ? "#BB86FC" : "white",
+                    fontWeight: isActive ? "bold" : "normal",
+                    marginLeft: "1rem",
+                    position: "relative",
+                    "&:hover": {
+                      color: "#fff",
+                      backgroundColor: "rgba(187, 134, 252, 0.1)", // Subtle hover background
+                    },
+                    "&:after": {
+                      content: '""',
+                      display: "block",
+                      width: "0",
+                      height: "2px",
+                      background: "#BB86FC",
+                      transition: "width 0.3s ease",
+                      position: "absolute",
+                      bottom: 0,
+                      left: 0,
+                    },
+                    "&:hover:after": {
+                      width: "100%",
+                    },
+                  }}
+                >
+                  {page}
+                </Button>
+              );
+            })}
           </Box>
+          {/* Logout Button */}
+          <Button
+            onClick={handleLogout}
+            sx={{
+              color: "#BB86FC",
+              fontWeight: "bold",
+              marginLeft: "1rem",
+              position: "relative",
+              "&:hover": {
+                color: "#fff",
+                backgroundColor: "rgba(187, 134, 252, 0.1)", // Subtle hover background
+              },
+              "&:after": {
+                content: '""',
+                display: "block",
+                width: "0",
+                height: "2px",
+                background: "#BB86FC",
+                transition: "width 0.3s ease",
+                position: "absolute",
+                bottom: 0,
+                left: 0,
+              },
+              "&:hover:after": {
+                width: "100%",
+              },
+            }}
+          >
+            Logout
+          </Button>
 
           {/* User Avatar Menu */}
-          <Box sx={{ flexGrow: 0 }}>
-            <Tooltip title="Open settings">
-              <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                <Avatar alt="User Avatar" src="/static/images/avatar/2.jpg" />
-              </IconButton>
-            </Tooltip>
-            <Menu
-              sx={{ mt: '45px' }}
-              anchorEl={anchorElUser}
-              anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
-              transformOrigin={{ vertical: 'top', horizontal: 'right' }}
-              open={Boolean(anchorElUser)}
-              onClose={() => handleCloseUserMenu()}
-            >
-              {settings.map((setting) => (
-                <MenuItem key={setting} onClick={() => handleCloseUserMenu(setting)}>
-                  <Typography textAlign="center">{setting}</Typography>
-                </MenuItem>
-              ))}
-            </Menu>
-          </Box>
         </Toolbar>
       </Container>
     </AppBar>
   );
 }
+
 export default ResponsiveAppBar;

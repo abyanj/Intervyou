@@ -19,7 +19,7 @@ html, body {
 #root {
   height: 100%;
   overflow-y: auto;
-  background-color: rgb(15, 15, 15) ; /* Ensure full height for React root */
+  background-color: #000 ; /* Ensure full height for React root */
 }
 
 /* 

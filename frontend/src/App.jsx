@@ -1,14 +1,23 @@
-import { BrowserRouter, Routes, Route, useLocation, Navigate } from 'react-router-dom';
-import { useEffect, useState } from 'react';
-import { supabase } from './supabaseClient';
-import HomePage from './pages/HomePage.jsx';
-import Dashboard from './pages/Dashboard';
-import './App.css';
-import Interview from './pages/Interview.jsx';
-import StartInterview from './pages/StartInterview.jsx';
-import Feedback from './pages/Feedback.jsx';
-import ResponsiveAppBar from './components/ResponsiveAppBar.jsx';
-import HowItWorks from './pages/HowItWorks.jsx';
+import {
+  BrowserRouter,
+  Routes,
+  Route,
+  useLocation,
+  Navigate,
+} from "react-router-dom";
+import { useEffect, useState } from "react";
+import { supabase } from "./supabaseClient";
+import HomePage from "./pages/HomePage.jsx";
+import Dashboard from "./pages/Dashboard";
+import "./App.css";
+import Interview from "./pages/Interview.jsx";
+import StartInterview from "./pages/StartInterview.jsx";
+import Feedback from "./pages/Feedback.jsx";
+import ResponsiveAppBar from "./components/ResponsiveAppBar.jsx";
+import HowItWorks from "./pages/HowItWorks.jsx";
+import NotFound from "./pages/NotFound.jsx";
+import { Upgrade } from "@mui/icons-material";
+import UpgradePage from "./pages/upgradePage.jsx";
 
 // Component to enforce authentication
 // eslint-disable-next-line react/prop-types
@@ -18,7 +27,9 @@ const ProtectedRoute = ({ children }) => {
 
   useEffect(() => {
     const checkAuth = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
       if (user) {
         setIsAuthenticated(true);
       }
@@ -31,12 +42,12 @@ const ProtectedRoute = ({ children }) => {
     return (
       <div
         style={{
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          height: '100vh',
-          backgroundColor: '#0f0f0f',
-          color: '#fff',
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100vh",
+          backgroundColor: "#0f0f0f",
+          color: "#fff",
         }}
       >
         <p>Loading...</p>
@@ -49,7 +60,7 @@ const ProtectedRoute = ({ children }) => {
 
 function App() {
   const location = useLocation();
-  const shouldShowAppBar = location.pathname !== '/'; // Don't show AppBar on HomePage
+  const shouldShowAppBar = location.pathname !== "/"; // Don't show AppBar on HomePage
 
   return (
     <>
@@ -57,7 +68,6 @@ function App() {
       <Routes>
         {/* Public Route */}
         <Route path="/" element={<HomePage />} />
-
         {/* Protected Routes */}
         <Route
           path="/dashboard"
@@ -99,6 +109,15 @@ function App() {
             </ProtectedRoute>
           }
         />
+        <Route
+          path="/upgrade"
+          element={
+            <ProtectedRoute>
+              <UpgradePage />
+            </ProtectedRoute>
+          }
+        />
+        <Route path="*" element={<NotFound />} /> {/* Catch-all route */}
       </Routes>
     </>
   );

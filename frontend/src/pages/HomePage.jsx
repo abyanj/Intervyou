@@ -4,6 +4,8 @@ import { supabase } from "../supabaseClient";
 import LoginForm from "../components/LoginForm";
 import SignupForm from "../components/SignupForm";
 import IntroSection from "../components/IntroSection";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export default function HomePage() {
   const navigate = useNavigate();
@@ -40,11 +42,14 @@ export default function HomePage() {
         password: loginPassword,
       });
       if (error) {
+        toast.error("Invalid login credentials. Please try again.");
         console.error("Login error:", error.message);
         return;
       }
+      toast.success("Login successful!");
       navigate("/dashboard");
     } catch (err) {
+      toast.error("An unexpected error occurred. Please try again.");
       console.error("Unexpected login error:", err);
     }
   };
@@ -57,6 +62,7 @@ export default function HomePage() {
         password: signupPassword,
       });
       if (error) {
+        toast.error("Sign-up failed. User may already exist.");
         console.error("Sign-up error:", error.message);
         return;
       }
@@ -68,17 +74,22 @@ export default function HomePage() {
           last_name: lastName,
         });
         if (profileError) {
+          toast.error("Failed to create profile. Please try again.");
           console.error("Profile insert error:", profileError.message);
         }
       }
+      toast.success("Sign-up successful! Redirecting...");
       navigate("/dashboard");
     } catch (err) {
+      toast.error("An unexpected error occurred. Please try again.");
       console.error("Unexpected sign-up error:", err);
     }
   };
 
   return (
     <div style={{ backgroundColor: "black", minHeight: "100vh" }}>
+      {/* Toast Container */}
+      <ToastContainer position="top-center" autoClose={3000} />
       <div className="home-container">
         <IntroSection
           isSignUp={isSignUp}

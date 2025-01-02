@@ -3,6 +3,8 @@ import QuestionAnswerIcon from "@mui/icons-material/QuestionAnswer";
 import FeedbackIcon from "@mui/icons-material/Feedback";
 import TaskAltIcon from "@mui/icons-material/TaskAlt";
 import RocketLaunchIcon from "@mui/icons-material/RocketLaunch";
+import EditNoteIcon from "@mui/icons-material/EditNote";
+import VideoCameraFrontIcon from "@mui/icons-material/VideoCameraFront";
 
 function HowItWorks() {
   const steps = [
@@ -29,14 +31,14 @@ function HowItWorks() {
   return (
     <Box
       sx={{
-        backgroundColor: "#121212",
+        backgroundColor: "#000",
         color: "#E0E0E0",
         height: "auto",
         padding: "2rem 0",
       }}
     >
       {/* Centered Content Wrapper */}
-      <Box sx={{ maxWidth: "1150px", margin: "0 auto", padding: "2rem" }}>
+      <Box sx={{ maxWidth: "1300px", margin: "0 auto", padding: "2rem" }}>
         {/* Header */}
         <Box
           sx={{
@@ -172,7 +174,7 @@ function HowItWorks() {
                   },
                 }}
               >
-                <RocketLaunchIcon
+                <EditNoteIcon
                   sx={{ fontSize: 50, color: "#F48FB1", marginBottom: "1rem" }}
                 />
                 <Typography variant="h5" sx={{ fontWeight: "bold" }}>
@@ -203,7 +205,7 @@ function HowItWorks() {
                   },
                 }}
               >
-                <RocketLaunchIcon
+                <VideoCameraFrontIcon
                   sx={{ fontSize: 50, color: "#81C784", marginBottom: "1rem" }}
                 />
                 <Typography variant="h5" sx={{ fontWeight: "bold" }}>
