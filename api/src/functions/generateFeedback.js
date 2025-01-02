@@ -51,7 +51,8 @@ app.http("generateFeedback", {
         {
             "rating": <number>,
             "feedback": "<your feedback>"
-        }`;
+        }
+        Also: The answer is being transcripted by an AI, so please ignore any grammatical error and provide feedback based on the content and give a rating that would make sense for an interviewer.`;
 
     let retryCount = 0;
     const maxRetries = 3;
@@ -72,7 +73,7 @@ app.http("generateFeedback", {
               { role: "user", content: prompt },
             ],
             max_tokens: 300,
-            temperature: 0.7,
+            temperature: 0.8,
           },
           {
             headers: {
