@@ -16,7 +16,7 @@ import Feedback from "./pages/Feedback.jsx";
 import ResponsiveAppBar from "./components/ResponsiveAppBar.jsx";
 import HowItWorks from "./pages/HowItWorks.jsx";
 import NotFound from "./pages/NotFound.jsx";
-import UpgradePage from "./pages/upgradePage.jsx";
+import Upgrade from "./pages/Upgrade.jsx";
 
 // Component to enforce authentication
 // eslint-disable-next-line react/prop-types
@@ -112,7 +112,7 @@ function App() {
           path="/upgrade"
           element={
             <ProtectedRoute>
-              <UpgradePage />
+              <Upgrade />
             </ProtectedRoute>
           }
         />

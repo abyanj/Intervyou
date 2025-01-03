@@ -1,6 +1,6 @@
 import { Box, Typography, Card, CardContent, Button } from "@mui/material";
 
-export default function UpgradePage() {
+export default function Upgrade() {
   const features = [
     {
       plan: "Starter",
