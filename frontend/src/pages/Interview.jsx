@@ -143,7 +143,7 @@ function Interview() {
               </Typography>
               <Typography variant="body1" sx={{ marginTop: "0.5rem" }}>
                 <strong>Number of Questions:</strong>{" "}
-                {JSON.parse(interview.questions_and_answers).length}
+                {interview.number_of_questions}
               </Typography>
             </CardContent>
           </Card>

@@ -98,6 +98,7 @@ function Dashboard() {
         experience_level: interviewData.level,
         created_by: user.id,
         questions_and_answers: JSON.stringify(questions),
+        number_of_questions: interviewData.numberOfQuestions,
         created_at: new Date().toISOString(),
       };
 
