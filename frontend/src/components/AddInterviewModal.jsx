@@ -149,7 +149,7 @@ const AddInterviewModal = ({ onSubmit, open, onClose, isSubmitting }) => {
           fullWidth
           select
           label="Number of Questions"
-          value={level}
+          value={numberOfQuestions}
           onChange={(e) => setNumber(e.target.value)}
           sx={{
             marginTop: "1rem",
