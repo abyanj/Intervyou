@@ -77,7 +77,8 @@ function Dashboard() {
       const questions = await apiService.generateQuestions(
         interviewData.level,
         interviewData.positionName,
-        interviewData.jobDescription
+        interviewData.jobDescription,
+        interviewData.numberOfQuestions
       );
 
       const {
