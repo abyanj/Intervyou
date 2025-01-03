@@ -11,18 +11,20 @@ import {
 } from "@mui/material";
 
 const levels = ["Intern", "Junior", "Intermediate", "Senior", "Senior+"];
+const numbers = ["1", "2", "3", "4", "5"];
 
 const AddInterviewModal = ({ onSubmit, open, onClose, isSubmitting }) => {
   const [positionName, setPositionName] = useState("");
   const [jobDescription, setJobDescription] = useState("");
   const [level, setLevel] = useState("");
+  const [numberOfQuestions, setNumber] = useState("");
 
   const isFormValid =
     positionName.trim() !== "" && jobDescription.trim() !== "" && level !== "";
 
   const handleSubmit = () => {
     if (isFormValid && !isSubmitting) {
-      onSubmit({ positionName, jobDescription, level });
+      onSubmit({ positionName, jobDescription, level, numberOfQuestions });
     }
   };
 
@@ -140,6 +142,29 @@ const AddInterviewModal = ({ onSubmit, open, onClose, isSubmitting }) => {
           {levels.map((lvl) => (
             <MenuItem key={lvl} value={lvl}>
               {lvl}
+            </MenuItem>
+          ))}
+        </TextField>
+        <TextField
+          fullWidth
+          select
+          label="numberOfQuestions"
+          value={level}
+          onChange={(e) => setNumber(e.target.value)}
+          sx={{
+            marginTop: "1rem",
+            input: { color: "#fff", backgroundColor: "#2a2a2a" },
+            label: { color: "#ccc" },
+            "& .MuiOutlinedInput-root": {
+              color: "#fff",
+              "& fieldset": { borderColor: "#444" },
+              "&:hover fieldset": { borderColor: "#666" },
+            },
+          }}
+        >
+          {numbers.map((number) => (
+            <MenuItem key={number} value={number}>
+              {number}
             </MenuItem>
           ))}
         </TextField>

@@ -22,7 +22,7 @@ app.http("generateQuestions", {
     }
 
     const body = await request.json();
-    const { level, positionName, jobDescription } = body;
+    const { level, positionName, jobDescription, numberOfQuestions } = body;
 
     if (!level || !positionName || !jobDescription) {
       context.log("ERROR: Missing required fields in request body");
@@ -48,7 +48,7 @@ app.http("generateQuestions", {
       };
     }
 
-    const prompt = `For the following information, a ${level} ${positionName} position with the following description: ${jobDescription}. Generate only 3 questions with answers in JSON format, including fields for 'question' and 'answer', and nothing else.`;
+    const prompt = `For the following information, a ${level} ${positionName} position with the following description: ${jobDescription}. Generate only ${numberOfQuestions} questions with answers in JSON format, including fields for 'question' and 'answer', and nothing else.`;
 
     try {
       const response = await axios.post(

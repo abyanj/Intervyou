@@ -3,14 +3,24 @@ import { supabase } from "../supabaseClient";
 const BASE_URL = import.meta.env.VITE_FUNCTIONS_BASE_URL;
 
 const apiService = {
-  async generateQuestions(level, positionName, jobDescription) {
+  async generateQuestions(
+    level,
+    positionName,
+    jobDescription,
+    numberOfQuestions
+  ) {
     try {
       const response = await fetch(`${BASE_URL}/api/generateQuestions`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ level, positionName, jobDescription }),
+        body: JSON.stringify({
+          level,
+          positionName,
+          jobDescription,
+          numberOfQuestions,
+        }),
       });
 
       if (!response.ok) {
