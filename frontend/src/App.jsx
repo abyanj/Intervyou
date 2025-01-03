@@ -16,7 +16,6 @@ import Feedback from "./pages/Feedback.jsx";
 import ResponsiveAppBar from "./components/ResponsiveAppBar.jsx";
 import HowItWorks from "./pages/HowItWorks.jsx";
 import NotFound from "./pages/NotFound.jsx";
-import { Upgrade } from "@mui/icons-material";
 import UpgradePage from "./pages/upgradePage.jsx";
 
 // Component to enforce authentication
