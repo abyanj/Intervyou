@@ -144,7 +144,14 @@ const AddInterviewModal = ({ onSubmit, open, onClose, isSubmitting }) => {
           ))}
         </TextField>
 
-        <Box sx={{ mt: 3, display: "flex", justifyContent: "space-between" }}>
+        <Box
+          sx={{
+            mt: 3,
+            display: "flex",
+            justifyContent: "space-between",
+            gap: "1rem",
+          }}
+        >
           <Button
             onClick={handleClose}
             variant="outlined"
@@ -169,9 +176,9 @@ const AddInterviewModal = ({ onSubmit, open, onClose, isSubmitting }) => {
             }}
           >
             {isSubmitting ? (
-              <div>
+              <div style={{ display: "flex", alignItems: "center" }}>
+                Generating Questions
                 <CircularProgress size={24} sx={{ color: "#fff" }} />
-                Generating Questions...
               </div>
             ) : (
               "Start Interview"
