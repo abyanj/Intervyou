@@ -48,7 +48,7 @@ app.http("generateQuestions", {
       };
     }
 
-    const prompt = `For the following information, a ${level} ${positionName} position with the following description: ${jobDescription}. Generate only ${numberOfQuestions} questions with verbal answers in JSON format, including fields for 'question' and 'answer', ie: { "question": '<sample_question>', "answer": '<sample_ans>' } and nothing else.`;
+    const prompt = `For the following information, a ${level} ${positionName} position with the following description: ${jobDescription}. Generate only ${numberOfQuestions} questions with verbal answers in JSON format, including fields for 'question' and 'answer', ie: [{ "question": '<sample_question>', "answer": '<sample_ans>'} ]and nothing else.`;
 
     try {
       const response = await axios.post(
