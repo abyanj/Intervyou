@@ -148,7 +148,7 @@ const AddInterviewModal = ({ onSubmit, open, onClose, isSubmitting }) => {
         <TextField
           fullWidth
           select
-          label="numberOfQuestions"
+          label="Number of Questions"
           value={level}
           onChange={(e) => setNumber(e.target.value)}
           sx={{
