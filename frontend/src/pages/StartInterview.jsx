@@ -47,7 +47,7 @@ function StartInterview() {
         }
 
         if (data && data.length > 0) {
-          //navigate(`/dashboard/interview/${id}/feedback`);
+          navigate(`/dashboard/interview/${id}/feedback`);
         }
       } catch (err) {
         console.error("Unexpected error while checking feedback:", err.message);
@@ -395,10 +395,9 @@ function StartInterview() {
                 ? "Next Question"
                 : "Finish Interview"}
             </Button>
+            {transitioning && <CircularProgress sx={{ marginTop: "2rem" }} />}
           </Box>
         )}
-
-        {transitioning && <CircularProgress sx={{ marginTop: "2rem" }} />}
       </Box>
     </Box>
   );
