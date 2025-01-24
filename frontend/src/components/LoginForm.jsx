@@ -1,6 +1,19 @@
-import React from 'react';
+import PropTypes from "prop-types";
+LoginForm.propTypes = {
+  email: PropTypes.string.isRequired,
+  setEmail: PropTypes.func.isRequired,
+  password: PropTypes.string.isRequired,
+  setPassword: PropTypes.func.isRequired,
+  onSubmit: PropTypes.func.isRequired,
+};
 
-export default function LoginForm({ email, setEmail, password, setPassword, onSubmit }) {
+export default function LoginForm({
+  email,
+  setEmail,
+  password,
+  setPassword,
+  onSubmit,
+}) {
   return (
     <form
       onSubmit={(e) => {

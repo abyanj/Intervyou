@@ -77,7 +77,7 @@ function App() {
           }
         />
         <Route
-          path="/dashboard/interview/:id"
+          path="/interview/:id"
           element={
             <ProtectedRoute>
               <Interview />
@@ -85,7 +85,7 @@ function App() {
           }
         />
         <Route
-          path="/dashboard/interview/:id/start"
+          path="/interview/:id/start"
           element={
             <ProtectedRoute>
               <StartInterview />
@@ -93,7 +93,7 @@ function App() {
           }
         />
         <Route
-          path="/dashboard/interview/:id/feedback"
+          path="/interview/:id/feedback"
           element={
             <ProtectedRoute>
               <Feedback />

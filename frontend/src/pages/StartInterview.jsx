@@ -5,7 +5,7 @@ import ReactWebcam from "react-webcam";
 import { Box, Typography, Button, CircularProgress } from "@mui/material";
 import useSpeechToText from "react-hook-speech-to-text";
 import apiService from "../services/apiService"; // Import the updated service
-import { PlayCircleFilledWhite, Timer, CheckCircle } from "@mui/icons-material";
+import { PlayCircleFilledWhite, Timer } from "@mui/icons-material";
 
 function StartInterview() {
   const { id } = useParams();
@@ -32,7 +32,9 @@ function StartInterview() {
     continuous: true,
     useLegacyResults: false,
   });
-
+  useEffect(() => {
+    document.title = "Setup - IntervYOU"; // Set the title dynamically
+  }, []);
   useEffect(() => {
     const checkFeedback = async () => {
       try {
@@ -47,7 +49,7 @@ function StartInterview() {
         }
 
         if (data && data.length > 0) {
-          navigate(`/dashboard/interview/${id}/feedback`);
+          navigate(`/interview/${id}/feedback`);
         }
       } catch (err) {
         console.error("Unexpected error while checking feedback:", err.message);
@@ -176,7 +178,7 @@ function StartInterview() {
         setTransitioning(false);
       }, 500);
     } else {
-      navigate(`/dashboard/interview/${id}/feedback`);
+      navigate(`/interview/${id}/feedback`);
     }
   };
 

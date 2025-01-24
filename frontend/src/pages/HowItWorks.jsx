@@ -2,11 +2,13 @@ import { Box, Typography, Grid, Paper, Avatar } from "@mui/material";
 import QuestionAnswerIcon from "@mui/icons-material/QuestionAnswer";
 import FeedbackIcon from "@mui/icons-material/Feedback";
 import TaskAltIcon from "@mui/icons-material/TaskAlt";
-import RocketLaunchIcon from "@mui/icons-material/RocketLaunch";
 import EditNoteIcon from "@mui/icons-material/EditNote";
 import VideoCameraFrontIcon from "@mui/icons-material/VideoCameraFront";
-
+import { useEffect } from "react";
 function HowItWorks() {
+  useEffect(() => {
+    document.title = "How it works - IntervYOU"; // Set the title dynamically
+  }, []);
   const steps = [
     {
       icon: <QuestionAnswerIcon sx={{ fontSize: 40, color: "#90CAF9" }} />,

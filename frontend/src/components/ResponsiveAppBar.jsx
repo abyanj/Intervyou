@@ -95,13 +95,14 @@ function ResponsiveAppBar() {
             >
               {pages.map((page) => {
                 const normalizedPage = page.toLowerCase().replace(/\s+/g, "-");
-                const isActive = location.pathname.includes(normalizedPage);
+                const isActive = normalizedPage === location.pathname;
+
                 return (
                   <MenuItem
                     key={page}
                     onClick={() => handleCloseNavMenu(page)}
                     sx={{
-                      color: isActive ? "#BB86FC" : "inherit",
+                      color: isActive ? "#BB86FC" : "white",
                       fontWeight: isActive ? "bold" : "normal",
                     }}
                   >
@@ -136,8 +137,7 @@ function ResponsiveAppBar() {
           <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
             {pages.map((page) => {
               const normalizedPage = page.toLowerCase().replace(/\s+/g, "-");
-              console.log(location.pathname, normalizedPage);
-              const isActive = location.pathname.includes(normalizedPage);
+              const isActive = location.pathname == "/" + normalizedPage;
               return (
                 <Button
                   key={page}

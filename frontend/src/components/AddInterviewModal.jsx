@@ -32,6 +32,7 @@ const AddInterviewModal = ({ onSubmit, open, onClose, isSubmitting }) => {
     setPositionName("");
     setJobDescription("");
     setLevel("");
+    setNumber("");
     onClose();
   };
 
@@ -40,6 +41,7 @@ const AddInterviewModal = ({ onSubmit, open, onClose, isSubmitting }) => {
       setPositionName("");
       setJobDescription("");
       setLevel("");
+      setNumber("");
     }
   }, [open]);
 
@@ -163,7 +165,11 @@ const AddInterviewModal = ({ onSubmit, open, onClose, isSubmitting }) => {
           }}
         >
           {numbers.map((number) => (
-            <MenuItem key={number} value={number}>
+            <MenuItem
+              key={number}
+              value={number}
+              disabled={number == 4 || number == 5 || number == 3}
+            >
               {number}
             </MenuItem>
           ))}

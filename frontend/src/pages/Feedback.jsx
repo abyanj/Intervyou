@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "../supabaseClient";
 import {
   Box,
@@ -15,9 +15,14 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
 function Feedback() {
   const { id } = useParams(); // Get the interview ID from the URL
+  const navigate = useNavigate();
   const [feedbackData, setFeedbackData] = useState([]);
   const [interviewDetails, setInterviewDetails] = useState(null); // To hold the interview details
   const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    document.title = "Feedback - IntervYOU"; // Set the title dynamically
+  }, []);
 
   useEffect(() => {
     const fetchFeedbackAndInterviewDetails = async () => {
@@ -30,6 +35,7 @@ function Feedback() {
 
         if (feedbackError) {
           console.error("Error fetching feedback:", feedbackError.message);
+          navigate("/404"); // Redirect to 404 page
           return;
         }
 
@@ -45,6 +51,7 @@ function Feedback() {
             "Error fetching interview details:",
             interviewError.message
           );
+          navigate("/404"); // Redirect to 404 page
           return;
         }
 

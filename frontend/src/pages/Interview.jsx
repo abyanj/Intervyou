@@ -27,6 +27,10 @@ function Interview() {
   const analyserRef = React.useRef(null);
 
   useEffect(() => {
+    document.title = "Interview - IntervYOU"; // Set the title dynamically
+  }, []);
+
+  useEffect(() => {
     const fetchInterview = async () => {
       const { data, error } = await supabase
         .from("mock_interviews")
@@ -82,7 +86,7 @@ function Interview() {
   };
 
   const handleStartInterview = () => {
-    navigate(`/dashboard/interview/${id}/start`);
+    navigate(`/interview/${id}/start`);
   };
 
   if (loading) {

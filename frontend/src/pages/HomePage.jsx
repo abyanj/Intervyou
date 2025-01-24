@@ -21,6 +21,9 @@ export default function HomePage() {
   const [signupEmail, setSignupEmail] = useState("");
   const [signupPassword, setSignupPassword] = useState("");
 
+  useEffect(() => {
+    document.title = "IntervYOU"; // Set the title dynamically
+  }, []);
   // Redirect to dashboard if already logged in
   useEffect(() => {
     const checkSession = async () => {

@@ -1,6 +1,9 @@
 import { Box, Typography, Card, CardContent, Button } from "@mui/material";
-
+import { useEffect } from "react";
 export default function Upgrade() {
+  useEffect(() => {
+    document.title = "Upgrade - IntervYOU"; // Set the title dynamically
+  }, []);
   const features = [
     {
       plan: "Starter",

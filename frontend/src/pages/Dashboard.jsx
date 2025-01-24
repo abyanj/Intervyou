@@ -18,6 +18,10 @@ function Dashboard() {
   const [mockInterviews, setMockInterviews] = useState([]);
 
   useEffect(() => {
+    document.title = "Dashboard - IntervYOU"; // Set the title dynamically
+  }, []);
+
+  useEffect(() => {
     const loadUserAndProfile = async () => {
       try {
         const {
@@ -103,7 +107,7 @@ function Dashboard() {
       };
 
       await apiService.saveInterviewToSupabase(interviewEntry);
-      navigate(`/dashboard/interview/${interviewEntry.id}`);
+      navigate(`/interview/${interviewEntry.id}`);
 
       setOpenModal(false);
     } catch (error) {
@@ -239,9 +243,7 @@ function Dashboard() {
                         gap: "2rem", // Adds space between items
                       }}
                       onClick={() =>
-                        navigate(
-                          `/dashboard/interview/${interview.id}/feedback`
-                        )
+                        navigate(`/interview/${interview.id}/feedback`)
                       }
                       style={{ cursor: "pointer" }}
                     >
