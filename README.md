@@ -59,21 +59,26 @@ IntervYOU is a cutting-edge web platform designed to help users prepare for job 
 
 ---
 ### Screenshots
+1. **Login**
+   ![HomePage Screenshot](homepage.png)
 
 1. **Dashboard**
-   ![Dashboard Screenshot](assets/screenshots/dashboard.png)
+   ![Dashboard Screenshot](dashboard.png)
 
 2. **Mock Interview Creation**
-   ![Mock Interview Creation Screenshot](assets/screenshots/interview_creation.png)
+   ![Mock Interview Creation Screenshot](setup.png)
 
-3. **Interview Setup**
-   ![Interview Setup Screenshot](assets/screenshots/interview_setup.png)
+3. **Interview Process**
+   ![Interview Process Screenshot](interview.png)
 
-4. **Interview Process**
-   ![Interview Process Screenshot](assets/screenshots/interview_process.png)
+4. **Feedback Page**
+   ![Feedback Page Screenshot](feedback.png)
 
-5. **Feedback Page**
-   ![Feedback Page Screenshot](assets/screenshots/feedback_page.png)
+5. **How It Works Page**
+   ![How It Works Page Screenshot](howitworks.png)
+
+6. **Upgrade Page**
+   ![Upgrade Page Screenshot](upgrade.png)
 
 
 ---
@@ -89,11 +94,19 @@ IntervYOU is a cutting-edge web platform designed to help users prepare for job 
    npm run dev
 ---
 
-### About the Developer
+### About the Developers
 
 **Abyan Jaigirdar**
 - **Email**: [abyanjaigirdar@hotmail.com](mailto:abyanjaigirdar@hotmail.com)
-- **Role**: Solo Full-Stack Developer
+- **Role**: Full-Stack Developer
+
+**Yumna Hoque**
+- **Email**: [yumnahoque@cmail.carleton.ca]
+- **Role**: Front-end Developer
+- 
+**Aryan Jaigirdar**
+- **Email**: [jaigirdar.aryan@gmail.com]
+- **Role**: Front-end Developer
 
 IntervYOU was created to empower job seekers with AI-driven tools to excel in their interviews.
 
