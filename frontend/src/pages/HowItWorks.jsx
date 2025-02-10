@@ -12,7 +12,7 @@ function HowItWorks() {
   const steps = [
     {
       icon: <QuestionAnswerIcon sx={{ fontSize: 40, color: "#90CAF9" }} />,
-      title: "Create a Mock Interview",
+      title: "Mock Interview",
       description:
         "Start by selecting the position, experience level, and providing a job description. Our AI generates realistic questions tailored to your needs.",
     },
@@ -36,7 +36,7 @@ function HowItWorks() {
         backgroundColor: "#000",
         color: "#E0E0E0",
         height: "auto",
-        padding: "2rem 0",
+        padding: "2rem 10rem",
       }}
     >
       {/* Centered Content Wrapper */}
@@ -75,7 +75,6 @@ function HowItWorks() {
           sx={{
             marginBottom: "2rem",
             color: "#BB86FC",
-            textDecoration: "underline",
           }}
         >
           Steps to Success
