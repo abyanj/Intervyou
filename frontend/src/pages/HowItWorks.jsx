@@ -1,32 +1,37 @@
-import { Box, Typography, Grid, Paper, Avatar } from "@mui/material";
-import QuestionAnswerIcon from "@mui/icons-material/QuestionAnswer";
-import FeedbackIcon from "@mui/icons-material/Feedback";
-import TaskAltIcon from "@mui/icons-material/TaskAlt";
-import EditNoteIcon from "@mui/icons-material/EditNote";
-import VideoCameraFrontIcon from "@mui/icons-material/VideoCameraFront";
-import { useEffect } from "react";
+import { Box, Typography } from "@mui/material";
+
 function HowItWorks() {
-  useEffect(() => {
-    document.title = "How it works - IntervYOU"; // Set the title dynamically
-  }, []);
   const steps = [
     {
-      icon: <QuestionAnswerIcon sx={{ fontSize: 40, color: "#90CAF9" }} />,
+      number: "1",
       title: "Mock Interview",
       description:
         "Start by selecting the position, experience level, and providing a job description. Our AI generates realistic questions tailored to your needs.",
     },
     {
-      icon: <FeedbackIcon sx={{ fontSize: 40, color: "#F48FB1" }} />,
+      number: "2",
       title: "Answer Questions",
       description:
         "Simulate a real interview by answering the questions. Our AI provides instant transcription of your answers.",
     },
     {
-      icon: <TaskAltIcon sx={{ fontSize: 40, color: "#81C784" }} />,
+      number: "3",
       title: "Get Feedback",
       description:
         "Receive detailed feedback and ratings for each answer to help you identify strengths and improve.",
+    },
+  ];
+
+  const comingSoonFeatures = [
+    {
+      title: "AI-Powered Resume Builder",
+      description:
+        "Automatically craft professional resumes based on your mock interviews.",
+    },
+    {
+      title: "Video Interview Analysis",
+      description:
+        "Get AI-driven feedback on your body language and speaking style.",
     },
   ];
 
@@ -35,191 +40,173 @@ function HowItWorks() {
       sx={{
         backgroundColor: "#000",
         color: "#E0E0E0",
-        height: "auto",
-        padding: "2rem 10rem",
+        textAlign: "center",
+        padding: "4rem 1rem",
       }}
     >
-      {/* Centered Content Wrapper */}
-      <Box sx={{ maxWidth: "1300px", margin: "0 auto", padding: "2rem" }}>
-        {/* Header */}
-        <Box
-          sx={{
-            textAlign: "center",
-            marginBottom: "3rem",
-            padding: "2rem",
-            backgroundColor: "#1E1E1E",
-            borderRadius: "15px",
-            boxShadow: "0 4px 10px rgba(0, 0, 0, 0.5)",
-          }}
-        >
-          <Typography
-            variant="h3"
+      {/* Header Section */}
+      <Typography
+        variant="h3"
+        sx={{
+          fontWeight: "bold",
+          color: "#BB86FC",
+          marginBottom: "2rem",
+        }}
+      >
+        How It Works
+      </Typography>
+      <Typography
+        variant="h5"
+        sx={{
+          color: "#BDBDBD",
+          marginBottom: "4rem",
+        }}
+      >
+        Follow these simple steps to start your journey to success.
+      </Typography>
+
+      {/* Steps Section */}
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          gap: "2rem",
+          flexWrap: "wrap",
+          position: "relative",
+        }}
+      >
+        {steps.map((step, index) => (
+          <Box
+            key={index}
             sx={{
-              fontWeight: "bold",
-              color: "#BB86FC",
-              textShadow: "2px 2px #000",
+              textAlign: "center",
+              flex: "1 1 auto",
+              minWidth: "300px",
+              position: "relative",
             }}
           >
-            How It Works
-          </Typography>
-          <Typography variant="h6" sx={{ marginTop: "1rem", color: "#BDBDBD" }}>
-            Your journey to acing interviews starts here. Learn how our platform
-            guides you through every step.
-          </Typography>
-        </Box>
+            {/* Number */}
+            <Typography
+              variant="h2"
+              sx={{
+                fontWeight: "bold",
+                color: "#BB86FC",
+                marginBottom: "1rem",
+              }}
+            >
+              {step.number}
+            </Typography>
 
-        {/* Steps Section */}
-        <Typography
-          variant="h4"
-          align="center"
-          sx={{
-            marginBottom: "2rem",
-            color: "#BB86FC",
-          }}
-        >
-          Steps to Success
-        </Typography>
-        <Grid container spacing={4} justifyContent="center">
-          {steps.map((step, index) => (
-            <Grid item xs={12} sm={6} md={4} key={index}>
-              <Paper
-                elevation={6}
+            {/* Title */}
+            <Typography
+              variant="h6"
+              sx={{
+                fontWeight: "bold",
+                marginBottom: "0.5rem",
+              }}
+            >
+              {step.title}
+            </Typography>
+
+            {/* Description */}
+            <Typography
+              variant="body1"
+              sx={{
+                color: "#BDBDBD",
+                maxWidth: "300px",
+                margin: "0 auto",
+              }}
+            >
+              {step.description}
+            </Typography>
+
+            {/* Curvy Arrow (except for the last step) */}
+            {index < steps.length - 1 && (
+              <Box
                 sx={{
-                  height: "300px", // Increased height for better spacing
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  textAlign: "center",
-                  padding: "1.5rem",
-                  backgroundColor: "#1E1E1E",
-                  borderRadius: "15px",
-                  overflowY: "auto", // Allow scrolling if content overflows
-                  transition: "transform 0.3s ease-in-out",
-                  "&:hover": {
-                    transform: "scale(1.05)",
-                    backgroundColor: "#232323",
-                  },
+                  position: "absolute",
+                  top: "50%",
+                  right: "-70px",
+                  transform: "translateY(-50%)",
                 }}
               >
-                <Avatar
-                  sx={{
-                    marginBottom: "1rem",
-                    backgroundColor: "#333",
-                    width: 60,
-                    height: 60,
-                  }}
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="100"
+                  height="50"
+                  viewBox="0 0 100 50"
+                  fill="none"
                 >
-                  {step.icon}
-                </Avatar>
-                <Typography
-                  variant="h5"
-                  sx={{
-                    fontWeight: "bold",
-                    marginBottom: "1rem",
-                    whiteSpace: "nowrap",
-                    overflow: "hidden",
-                    textOverflow: "ellipsis",
-                    maxWidth: "100%",
-                  }}
-                >
-                  {step.title}
-                </Typography>
-                <Typography
-                  variant="body1"
-                  sx={{
-                    color: "#BDBDBD",
-                    textAlign: "justify",
-                    lineHeight: 1.5,
-                  }}
-                >
-                  {step.description}
-                </Typography>
-              </Paper>
-            </Grid>
-          ))}
-        </Grid>
+                  <path
+                    d="M0 25 C50 0, 50 50, 100 25"
+                    stroke="#BB86FC"
+                    strokeWidth="2"
+                    fill="transparent"
+                  />
+                  <polygon points="100,25 90,20 90,30" fill="#BB86FC" />
+                </svg>
+              </Box>
+            )}
+          </Box>
+        ))}
+      </Box>
 
-        {/* Coming Soon Section */}
-        <Box
-          sx={{
-            marginTop: "4rem",
-            textAlign: "center",
-            padding: "2rem",
-            color: "#F9FAFB",
-          }}
-        >
-          <Typography
-            variant="h4"
-            sx={{ marginBottom: "1rem", color: "#90CAF9" }}
+      {/* Coming Soon Section */}
+      <Typography
+        variant="h4"
+        sx={{
+          fontWeight: "bold",
+          color: "#BB86FC",
+          marginTop: "4rem",
+          marginBottom: "2rem",
+        }}
+      >
+        Coming Soon 🚀
+      </Typography>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          gap: "2rem",
+          flexWrap: "wrap",
+        }}
+      >
+        {comingSoonFeatures.map((feature, index) => (
+          <Box
+            key={index}
+            sx={{
+              textAlign: "center",
+              flex: "1 1 auto",
+              minWidth: "300px",
+              maxWidth: "400px",
+              padding: "2rem",
+              backgroundColor: "#1E1E1E",
+              borderRadius: "15px",
+              margin: "1rem 0",
+            }}
           >
-            Coming Soon 🚀
-          </Typography>
-          <Grid container spacing={4} justifyContent="center">
-            <Grid item xs={12} sm={6}>
-              <Paper
-                elevation={6}
-                sx={{
-                  height: "200px",
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  padding: "2rem",
-                  backgroundColor: "#1E1E1E",
-                  borderRadius: "15px",
-                  transition: "transform 0.3s ease-in-out",
-                  "&:hover": {
-                    transform: "scale(1.05)",
-                    backgroundColor: "#232323",
-                  },
-                }}
-              >
-                <EditNoteIcon
-                  sx={{ fontSize: 50, color: "#F48FB1", marginBottom: "1rem" }}
-                />
-                <Typography variant="h5" sx={{ fontWeight: "bold" }}>
-                  AI-Powered Resume Builder
-                </Typography>
-                <Typography variant="body2" sx={{ color: "#BDBDBD" }}>
-                  Automatically craft professional resumes based on your mock
-                  interviews.
-                </Typography>
-              </Paper>
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <Paper
-                elevation={6}
-                sx={{
-                  height: "200px",
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  padding: "2rem",
-                  backgroundColor: "#1E1E1E",
-                  borderRadius: "15px",
-                  transition: "transform 0.3s ease-in-out",
-                  "&:hover": {
-                    transform: "scale(1.05)",
-                    backgroundColor: "#232323",
-                  },
-                }}
-              >
-                <VideoCameraFrontIcon
-                  sx={{ fontSize: 50, color: "#81C784", marginBottom: "1rem" }}
-                />
-                <Typography variant="h5" sx={{ fontWeight: "bold" }}>
-                  Video Interview Analysis
-                </Typography>
-                <Typography variant="body2" sx={{ color: "#BDBDBD" }}>
-                  Get AI-driven feedback on your body language and speaking
-                  style.
-                </Typography>
-              </Paper>
-            </Grid>
-          </Grid>
-        </Box>
+            <Typography
+              variant="h6"
+              sx={{
+                fontWeight: "bold",
+                color: "#E0E0E0",
+                marginBottom: "0.5rem",
+              }}
+            >
+              {feature.title}
+            </Typography>
+            <Typography
+              variant="body1"
+              sx={{
+                color: "#BDBDBD",
+              }}
+            >
+              {feature.description}
+            </Typography>
+          </Box>
+        ))}
       </Box>
     </Box>
   );
