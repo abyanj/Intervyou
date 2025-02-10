@@ -9,6 +9,7 @@ import {
   MenuItem,
   CircularProgress,
 } from "@mui/material";
+import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
 
 const levels = ["Intern", "Junior", "Intermediate", "Senior", "Senior+"];
 const numbers = ["1", "2", "3", "4", "5"];
@@ -20,7 +21,10 @@ const AddInterviewModal = ({ onSubmit, open, onClose, isSubmitting }) => {
   const [numberOfQuestions, setNumber] = useState("");
 
   const isFormValid =
-    positionName.trim() !== "" && jobDescription.trim() !== "" && level !== "";
+    positionName.trim() !== "" &&
+    jobDescription.trim() !== "" &&
+    level !== "" &&
+    numberOfQuestions !== "";
 
   const handleSubmit = () => {
     if (isFormValid && !isSubmitting) {
@@ -212,7 +216,14 @@ const AddInterviewModal = ({ onSubmit, open, onClose, isSubmitting }) => {
                 <CircularProgress size={24} sx={{ color: "#fff" }} />
               </div>
             ) : (
-              "Start Interview"
+              <div
+                style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}
+              >
+                Start Interview{" "}
+                <div style={{ display: "flex", alignItems: "center" }}>
+                  <AutoAwesomeIcon size={"small"} /> 1
+                </div>
+              </div>
             )}
           </Button>
         </Box>

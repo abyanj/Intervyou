@@ -1,4 +1,9 @@
-import React from 'react';
+
+import PropTypes from 'prop-types';
+IntroSection.propTypes = {
+  isSignUp: PropTypes.bool.isRequired,
+  toggleSignUp: PropTypes.func.isRequired,
+};
 
 export default function IntroSection({ isSignUp, toggleSignUp }) {
   return (

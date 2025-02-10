@@ -7,6 +7,7 @@ import Typography from "@mui/material/Typography";
 import Menu from "@mui/material/Menu";
 import MenuIcon from "@mui/icons-material/Menu";
 import Container from "@mui/material/Container";
+import AccountCircle from "@mui/icons-material/AccountCircle";
 
 import Button from "@mui/material/Button";
 
@@ -22,6 +23,7 @@ function ResponsiveAppBar() {
   const location = useLocation();
 
   const [anchorElNav, setAnchorElNav] = React.useState(null);
+  const [anchorElUser, setAnchorElUser] = React.useState(null);
 
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
@@ -31,6 +33,9 @@ function ResponsiveAppBar() {
     if (!error) {
       navigate("/");
     }
+  };
+  const handleOpenUserMenu = (event) => {
+    setAnchorElUser(event.currentTarget);
   };
 
   const handleCloseNavMenu = (page) => {
@@ -102,7 +107,7 @@ function ResponsiveAppBar() {
                     key={page}
                     onClick={() => handleCloseNavMenu(page)}
                     sx={{
-                      color: isActive ? "#BB86FC" : "white",
+                      color: isActive ? "#BB86FC" : "black",
                       fontWeight: isActive ? "bold" : "normal",
                     }}
                   >
@@ -173,7 +178,7 @@ function ResponsiveAppBar() {
             })}
           </Box>
           {/* Logout Button */}
-          <Button
+          {/* <Button
             onClick={handleLogout}
             sx={{
               color: "#BB86FC",
@@ -201,7 +206,22 @@ function ResponsiveAppBar() {
             }}
           >
             Logout
-          </Button>
+          </Button> */}
+          <Box sx={{ flexGrow: 0 }}>
+            <IconButton onClick={handleOpenUserMenu} color="inherit">
+              <AccountCircle sx={{ fontSize: 32 }} />
+            </IconButton>
+            <Menu
+              anchorEl={anchorElUser}
+              anchorOrigin={{ vertical: "top", horizontal: "right" }}
+              transformOrigin={{ vertical: "top", horizontal: "right" }}
+              open={Boolean(anchorElUser)}
+              onClose={() => setAnchorElUser(null)}
+            >
+              <MenuItem onClick={() => setAnchorElUser(null)}>Profile</MenuItem>
+              <MenuItem onClick={handleLogout}>Logout</MenuItem>
+            </Menu>
+          </Box>
 
           {/* User Avatar Menu */}
         </Toolbar>

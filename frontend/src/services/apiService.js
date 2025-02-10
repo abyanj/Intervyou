@@ -1,8 +1,71 @@
+// services/apiService.js
 import { supabase } from "../supabaseClient";
 
 const BASE_URL = import.meta.env.VITE_FUNCTIONS_BASE_URL;
 
 const apiService = {
+  // 1) Get the currently authenticated user from Supabase
+  async getCurrentUser() {
+    const {
+      data: { user },
+      error,
+    } = await supabase.auth.getUser();
+
+    if (error || !user) {
+      throw new Error(error?.message || "No user found");
+    }
+    return user;
+  },
+
+  async createProCheckoutSession(userId) {
+    try {
+      // Example: Azure Function endpoint at /api/CreateCheckoutSession
+      const response = await fetch(`${BASE_URL}/api/createCheckoutSession`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ userId }),
+      });
+      if (!response.ok) {
+        throw new Error("Failed to create checkout session");
+      }
+      const data = await response.json();
+      // Expecting something like { url: "https://checkout.stripe.com/..." }
+      return data;
+    } catch (error) {
+      console.error("Error creating checkout session:", error.message);
+      throw error;
+    }
+  },
+  // 2) Fetch the user's profile from the 'profiles' table
+  async getUserProfile(userId) {
+    const { data, error } = await supabase
+      .from("profiles")
+      .select("*")
+      .eq("id", userId)
+      .single();
+
+    if (error) {
+      throw new Error(error.message);
+    }
+    return data;
+  },
+
+  // 3) Fetch all mock interviews created by a specific user
+  async getMockInterviewsByUser(userId) {
+    const { data, error } = await supabase
+      .from("mock_interviews")
+      .select("*")
+      .eq("created_by", userId);
+
+    if (error) {
+      throw new Error(error.message);
+    }
+    return data;
+  },
+
+  // Your existing code below...
   async generateQuestions(
     level,
     positionName,
@@ -73,7 +136,7 @@ const apiService = {
           console.warn("Rate limit hit. Retrying...");
           attempts++;
           if (attempts < maxRetries) {
-            await new Promise((resolve) => setTimeout(resolve, retryDelay)); // Wait before retrying
+            await new Promise((resolve) => setTimeout(resolve, retryDelay));
           } else {
             throw new Error("Rate limit exceeded. Max retries reached.");
           }
@@ -106,6 +169,31 @@ const apiService = {
       console.error("Unexpected error saving feedback:", error.message);
       throw error;
     }
+  },
+
+  async getInterviewById(interviewId) {
+    const { data, error } = await supabase
+      .from("mock_interviews")
+      .select("*")
+      .eq("id", interviewId)
+      .single();
+
+    if (error) {
+      throw new Error(error.message);
+    }
+    return data;
+  },
+
+  async checkIfFeedbackExists(mockId) {
+    const { data, error } = await supabase
+      .from("user_answers")
+      .select("id")
+      .eq("mock_id_ref", mockId);
+
+    if (error) {
+      throw new Error(error.message);
+    }
+    return data; // array of existing feedback rows or empty array
   },
 
   async deleteInterview(interviewId) {

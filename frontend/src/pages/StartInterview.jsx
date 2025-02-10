@@ -1,26 +1,30 @@
 import { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { supabase } from "../supabaseClient";
 import ReactWebcam from "react-webcam";
 import { Box, Typography, Button, CircularProgress } from "@mui/material";
 import useSpeechToText from "react-hook-speech-to-text";
-import apiService from "../services/apiService"; // Import the updated service
+import apiService from "../services/apiService";
 import { PlayCircleFilledWhite, Timer } from "@mui/icons-material";
 
 function StartInterview() {
   const { id } = useParams();
   const navigate = useNavigate();
+
+  // ────────────────────────────────
+  // STATE
+  // ────────────────────────────────
   const [interview, setInterview] = useState(null);
   const [loading, setLoading] = useState(true);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [preparationTime, setPreparationTime] = useState(30);
   const [answerTime, setAnswerTime] = useState(60);
   const [phase, setPhase] = useState("preparation");
-  const [saving, setSaving] = useState(false); // New state for saving loader
+  const [saving, setSaving] = useState(false);
   const [transitioning, setTransitioning] = useState(false);
   const [currentTranscription, setCurrentTranscription] = useState("");
-  const webcamRef = useRef(null);
 
+  // Webcam & Speech
+  const webcamRef = useRef(null);
   const {
     error,
     isRecording,
@@ -32,22 +36,23 @@ function StartInterview() {
     continuous: true,
     useLegacyResults: false,
   });
+
+  // ────────────────────────────────
+  // EFFECTS
+  // ────────────────────────────────
+
+  // Set the document title once
   useEffect(() => {
-    document.title = "Setup - IntervYOU"; // Set the title dynamically
+    document.title = "Setup - IntervYOU";
   }, []);
+
+  // Check if feedback was already generated for this interview
   useEffect(() => {
+    setLoading(true);
     const checkFeedback = async () => {
       try {
-        const { data, error } = await supabase
-          .from("user_answers")
-          .select("*")
-          .eq("mock_id_ref", id);
-
-        if (error) {
-          console.error("Error checking feedback:", error.message);
-          return;
-        }
-
+        const data = await apiService.checkIfFeedbackExists(id);
+        // If feedback rows exist, redirect to the feedback page
         if (data && data.length > 0) {
           navigate(`/interview/${id}/feedback`);
         }
@@ -59,57 +64,65 @@ function StartInterview() {
     checkFeedback();
   }, [id, navigate]);
 
+  // Fetch interview data once
   useEffect(() => {
-    const fetchInterview = async () => {
-      const { data, error } = await supabase
-        .from("mock_interviews")
-        .select("*")
-        .eq("id", id)
-        .single();
-
-      if (error) {
-        console.error("Error fetching interview:", error.message);
-      } else {
+    setLoading(true);
+    async function fetchInterviewData() {
+      try {
+        // Use the apiService to get the interview by ID
+        const data = await apiService.getInterviewById(id);
         setInterview(data);
+      } catch (err) {
+        console.error("Error while fetching interview:", err.message);
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
-    };
+    }
 
-    fetchInterview();
+    if (id) {
+      fetchInterviewData();
+    }
   }, [id]);
 
-  useEffect(() => {
-    if (!interview) return;
-
-    if (phase === "preparation") {
-      if (preparationTime > 0) {
-        const timer = setTimeout(() => {
-          setPreparationTime((prev) => prev - 1);
-        }, 1000);
-        return () => clearTimeout(timer);
-      } else {
-        handleStartAnswering();
-      }
-    }
-  }, [preparationTime, phase, interview]);
-
-  useEffect(() => {
-    if (phase === "answering") {
-      if (answerTime > 0) {
-        const timer = setTimeout(() => {
-          setAnswerTime((prev) => prev - 1);
-        }, 1000);
-        return () => clearTimeout(timer);
-      } else {
-        handleFinishAnswering();
-      }
-    }
-  }, [answerTime, phase]);
-
+  // Collect latest transcript from the SpeechToText results
   useEffect(() => {
     const transcript = results.map((result) => result.transcript).join(" ");
     setCurrentTranscription(transcript);
   }, [results]);
+
+  /**
+   * Single effect to handle the countdown logic for both
+   * preparationTime and answerTime.
+   */
+  useEffect(() => {
+    if (!interview) return;
+
+    let timerId;
+
+    // PHASE: Preparation
+    if (phase === "preparation" && preparationTime > 0) {
+      timerId = setTimeout(() => {
+        setPreparationTime((prev) => prev - 1);
+      }, 1000);
+    } else if (phase === "preparation" && preparationTime === 0) {
+      handleStartAnswering(); // Auto-switch to answering
+    }
+
+    // PHASE: Answering
+    if (phase === "answering" && answerTime > 0) {
+      timerId = setTimeout(() => {
+        setAnswerTime((prev) => prev - 1);
+      }, 1000);
+    } else if (phase === "answering" && answerTime === 0) {
+      handleFinishAnswering(); // Auto-finish answer
+    }
+
+    return () => clearTimeout(timerId);
+  }, [interview, phase, preparationTime, answerTime]);
+
+  // ────────────────────────────────
+  // HANDLERS
+  // ────────────────────────────────
 
   const handleStartAnswering = () => {
     if (phase !== "preparation") return;
@@ -117,7 +130,10 @@ function StartInterview() {
     setPhase("answering");
     setPreparationTime(0);
     setCurrentTranscription("");
-    if (isRecording) stopSpeechToText();
+
+    if (isRecording) {
+      stopSpeechToText();
+    }
     setResults([]);
     startSpeechToText();
   };
@@ -125,41 +141,38 @@ function StartInterview() {
   const handleFinishAnswering = async () => {
     if (phase !== "answering") return;
 
-    setSaving(true); // Show saving loader
+    setSaving(true);
     setPhase("completed");
     stopSpeechToText();
 
     const finalTranscription = currentTranscription.trim();
-    console.log(finalTranscription);
     const currentQuestion = JSON.parse(interview.questions_and_answers)[
       currentQuestionIndex
     ];
-    const mock_id_ref = id;
 
+    // Save the feedback
     try {
       const feedback = await apiService.generateFeedback(
         currentQuestion.question,
-        finalTranscription ? finalTranscription : "no answer"
+        finalTranscription || "no answer"
       );
 
-      console.log("Feedback:", feedback);
-
       const feedbackData = {
-        mock_id_ref,
+        mock_id_ref: id,
         question: currentQuestion.question,
         correct_ans: currentQuestion.answer,
         user_ans: finalTranscription || "no answer",
-        feedback: feedback.feedback || "", // Feedback from AI
-        rating: feedback.rating || 1, // Rating from AI
+        feedback: feedback.feedback || "",
+        rating: feedback.rating || 1,
         created_at: new Date().toISOString(),
       };
 
       await apiService.saveFeedbackToSupabase(feedbackData);
-    } catch (error) {
-      console.error("Error generating feedback or saving:", error.message);
+    } catch (err) {
+      console.error("Error generating feedback or saving:", err.message);
     }
 
-    setSaving(false); // Hide saving loader
+    setSaving(false);
   };
 
   const handleNextQuestion = () => {
@@ -168,6 +181,7 @@ function StartInterview() {
     const totalQuestions = JSON.parse(interview.questions_and_answers).length;
 
     if (currentQuestionIndex + 1 < totalQuestions) {
+      // Prepare for next question
       setTransitioning(true);
       setTimeout(() => {
         setCurrentQuestionIndex((prev) => prev + 1);
@@ -181,6 +195,10 @@ function StartInterview() {
       navigate(`/interview/${id}/feedback`);
     }
   };
+
+  // ────────────────────────────────
+  // RENDER LOGIC
+  // ────────────────────────────────
 
   if (error) {
     return (
@@ -210,6 +228,7 @@ function StartInterview() {
     );
   }
 
+  // Safely parse the questions
   const questions = JSON.parse(interview.questions_and_answers);
   const currentQuestion = questions[currentQuestionIndex];
 
@@ -223,6 +242,7 @@ function StartInterview() {
         margin: "0 auto",
       }}
     >
+      {/* Progress Bar / Header */}
       <Box
         sx={{
           marginBottom: "2rem",
@@ -259,6 +279,8 @@ function StartInterview() {
           />
         </Box>
       </Box>
+
+      {/* Main Question & Webcam */}
       <Box
         sx={{
           backgroundColor: "#0f0f0f",
@@ -289,19 +311,20 @@ function StartInterview() {
           <ReactWebcam
             ref={webcamRef}
             audio
-            style={{
-              width: "100%",
-              height: "100%",
-            }}
+            style={{ width: "100%", height: "100%" }}
           />
         </Box>
+
+        {/* PHASE: Preparation */}
         {phase === "preparation" && (
           <Box sx={{ textAlign: "center", paddingTop: "2rem" }}>
             <Box>
               <Timer
                 sx={{ fontSize: 40, marginBottom: "1rem", color: "#BB86FC" }}
               />
-              <Typography variant="h6">{`Interview will begin in: ${preparationTime}s`}</Typography>
+              <Typography variant="h6">
+                Interview will begin in: {preparationTime}s
+              </Typography>
             </Box>
             <Button
               variant="contained"
@@ -309,11 +332,9 @@ function StartInterview() {
               onClick={handleStartAnswering}
               sx={{
                 marginTop: "1rem",
-                backgroundColor: "#2196f3", // Blue shade for start
+                backgroundColor: "#2196f3",
                 color: "#fff",
-                "&:hover": {
-                  backgroundColor: "#1976d2", // Darker blue on hover
-                },
+                "&:hover": { backgroundColor: "#1976d2" },
                 fontWeight: "bold",
                 padding: "0.8rem 2rem",
                 borderRadius: "8px",
@@ -325,24 +346,24 @@ function StartInterview() {
           </Box>
         )}
 
+        {/* PHASE: Answering */}
         {phase === "answering" && (
           <Box sx={{ textAlign: "center", paddingTop: "2rem" }}>
             <PlayCircleFilledWhite
               sx={{ fontSize: 40, marginBottom: "1rem", color: "#81C784" }}
             />
-
-            <Typography variant="h6">{`Recording answer... Time left: ${answerTime}s`}</Typography>
+            <Typography variant="h6">
+              Recording answer... Time left: {answerTime}s
+            </Typography>
             <Button
               variant="contained"
               color="secondary"
               onClick={handleFinishAnswering}
               sx={{
                 marginTop: "1rem",
-                backgroundColor: "#BB86FC", // Red shade for emphasis
+                backgroundColor: "#BB86FC",
                 color: "#fff",
-                "&:hover": {
-                  backgroundColor: "#863ddf", // Darker red on hover
-                },
+                "&:hover": { backgroundColor: "#863ddf" },
                 fontWeight: "bold",
                 padding: "0.8rem 2rem",
                 borderRadius: "8px",
@@ -354,20 +375,13 @@ function StartInterview() {
           </Box>
         )}
 
+        {/* PHASE: Completed */}
         {phase === "completed" && saving && (
           <Box sx={{ textAlign: "center", marginTop: "2rem" }}>
-            <CircularProgress
-              sx={{
-                color: "#FF5722", // Orange shade for loader
-                marginBottom: "1rem",
-              }}
-            />
+            <CircularProgress sx={{ color: "#FF5722", marginBottom: "1rem" }} />
             <Typography
               variant="h6"
-              sx={{
-                color: "#E0E0E0",
-                fontWeight: "bold",
-              }}
+              sx={{ color: "#E0E0E0", fontWeight: "bold" }}
             >
               Saving answer
             </Typography>
@@ -382,11 +396,9 @@ function StartInterview() {
               onClick={handleNextQuestion}
               sx={{
                 marginTop: "2rem",
-                backgroundColor: "#4caf50", // Green shade for success
+                backgroundColor: "#4caf50",
                 color: "#fff",
-                "&:hover": {
-                  backgroundColor: "#388e3c", // Darker green on hover
-                },
+                "&:hover": { backgroundColor: "#388e3c" },
                 fontWeight: "bold",
                 padding: "0.8rem 2rem",
                 borderRadius: "8px",

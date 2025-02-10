@@ -1,29 +1,34 @@
 import { Box, Typography, Card, CardContent, Button } from "@mui/material";
+import apiService from "../services/apiService";
 import { useEffect } from "react";
-export default function Upgrade() {
+
+export default function Upgrade({ currentPlan }) {
   useEffect(() => {
     document.title = "Upgrade - IntervYOU"; // Set the title dynamically
+
+    // Fetch the user's current plan
   }, []);
+
   const features = [
     {
       plan: "Starter",
       price: "Free",
       description: "Try the basic features of IntervYOU.",
       details: ["5 Free Mock Interview", "Basic Feedback"],
-      buttonText: "Current Plan",
-      disabled: true,
+      buttonText: currentPlan === "starter" ? "Current Plan" : "Downgrade",
+      disabled: currentPlan == "starter",
     },
     {
       plan: "Pro",
       price: "$10 / month",
       description: "For professionals looking to sharpen their skills.",
       details: [
-        "Unlimited Mock Interviews",
+        "50 Mock Interviews",
         "Advanced Feedback & Analysis",
         "Priority Support",
       ],
-      buttonText: "Coming Soon",
-      disabled: true,
+      buttonText: currentPlan === "pro" ? "Current Plan" : "Upgrade",
+      disabled: currentPlan == "pro",
     },
     {
       plan: "Enterprise",
@@ -38,6 +43,23 @@ export default function Upgrade() {
       disabled: false, // Placeholder for future inquiry feature
     },
   ];
+
+  const handleProPurchase = async () => {
+    try {
+      // 1) Get current user
+      const user = await apiService.getCurrentUser();
+      const userId = user.id;
+
+      // 2) Call Azure Function via apiService
+      const { url } = await apiService.createProCheckoutSession(userId);
+
+      // 3) Redirect to Stripe checkout
+      window.location.href = url;
+    } catch (error) {
+      console.error("Payment initiation error:", error.message);
+      alert("Unable to initiate payment. Please try again.");
+    }
+  };
 
   const handleContactUs = () => {
     alert("Enterprise inquiries coming soon. Stay tuned!");
@@ -139,10 +161,14 @@ export default function Upgrade() {
                 color="primary"
                 disabled={feature.disabled}
                 onClick={
-                  feature.plan === "Enterprise" ? handleContactUs : undefined
+                  feature.plan === "Pro"
+                    ? handleProPurchase
+                    : feature.plan === "Enterprise"
+                    ? handleContactUs
+                    : undefined
                 }
                 sx={{
-                  backgroundColor: feature.disabled ? "#444" : "#BB86FC",
+                  backgroundColor: "#BB86FC",
                   color: feature.disabled ? "#999" : "#fff",
                   "&:hover": {
                     backgroundColor: feature.disabled ? "#444" : "#9b69d4",

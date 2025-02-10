@@ -175,8 +175,8 @@ function Interview() {
               </Typography>
               <Typography sx={{ color: "#d18c09" }} variant="body2">
                 Enable your webcam and microphone to start the AI-generated mock
-                interview. It contains 5 questions you can answer, and at the
-                end, you’ll receive a report based on your responses.{" "}
+                interview. It contains questions you can answer, and at the end,
+                you’ll receive a report based on your responses.{" "}
                 <strong>Note:</strong> We do not record your video, and webcam
                 access can be disabled at any time.
               </Typography>

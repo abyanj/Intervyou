@@ -1,83 +1,69 @@
+// pages/Dashboard.js
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { supabase } from "../supabaseClient";
-import AddInterviewModal from "../components/AddInterviewModal";
-import { Box, Typography } from "@mui/material";
-import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
-import { v4 as uuidv4 } from "uuid";
-import CircularProgress from "@mui/material/CircularProgress";
 
 import apiService from "../services/apiService";
 
+// Our sub-components
+import LoadingScreen from "../components/LoadingScreen";
+
+import CreateInterviewCard from "../components/CreateInterviewCard";
+import InterviewList from "../components/InterviewList";
+import AddInterviewModal from "../components/AddInterviewModal";
+import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
+import { Box, Typography } from "@mui/material";
+import { v4 as uuidv4 } from "uuid";
+
 function Dashboard() {
   const navigate = useNavigate();
+
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
+
+  const [mockInterviews, setMockInterviews] = useState([]);
   const [openModal, setOpenModal] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [mockInterviews, setMockInterviews] = useState([]);
 
+  // Set the document title
   useEffect(() => {
-    document.title = "Dashboard - IntervYOU"; // Set the title dynamically
+    document.title = "Dashboard - IntervYOU";
   }, []);
 
+  // Load data on mount
   useEffect(() => {
-    const loadUserAndProfile = async () => {
+    const loadData = async () => {
       try {
-        const {
-          data: { user },
-          error: userError,
-        } = await supabase.auth.getUser();
+        // 1) Get the current user
+        const user = await apiService.getCurrentUser();
 
-        if (userError || !user) {
-          console.error(
-            "Error fetching user:",
-            userError?.message || "No user found"
-          );
-          navigate("/");
-          return;
-        }
-
-        const { data: profileData, error: profileError } = await supabase
-          .from("profiles")
-          .select("*")
-          .eq("id", user.id)
-          .single();
-
-        if (profileError) {
-          console.error("Error fetching profile:", profileError.message);
-          navigate("/");
-          return;
-        }
-
+        // 2) Get the user profile
+        const profileData = await apiService.getUserProfile(user.id);
         setProfile(profileData);
+        console.log(profileData);
 
-        const { data: interviews, error: interviewError } = await supabase
-          .from("mock_interviews")
-          .select("*")
-          .eq("created_by", user.id);
-
-        if (interviewError) {
-          console.error("Error fetching interviews:", interviewError.message);
-        } else {
-          setMockInterviews(interviews || []);
-        }
+        // 3) Get the user’s mock interviews
+        const interviews = await apiService.getMockInterviewsByUser(user.id);
+        setMockInterviews(interviews || []);
       } catch (error) {
-        console.error("Unexpected error loading profile:", error.message);
+        console.error("Error loading data:", error.message);
+        navigate("/"); // or show some error message
       } finally {
         setLoading(false);
       }
     };
 
-    loadUserAndProfile();
+    loadData();
   }, [navigate]);
 
+  // Handlers for the modal
   const handleOpenModal = () => setOpenModal(true);
   const handleCloseModal = () => setOpenModal(false);
 
+  // Submit new interview
   const handleAddInterview = async (interviewData) => {
     setIsSubmitting(true);
     try {
+      // Generate questions
       const questions = await apiService.generateQuestions(
         interviewData.level,
         interviewData.positionName,
@@ -85,16 +71,10 @@ function Dashboard() {
         interviewData.numberOfQuestions
       );
 
-      const {
-        data: { user },
-        error: userError,
-      } = await supabase.auth.getUser();
-      if (userError || !user) {
-        alert("Error: Unable to identify the user. Please log in again.");
-        setIsSubmitting(false);
-        return;
-      }
+      // Double-check user is logged in
+      const user = await apiService.getCurrentUser();
 
+      // Create interview entry
       const interviewEntry = {
         id: uuidv4(),
         position_title: interviewData.positionName,
@@ -106,218 +86,86 @@ function Dashboard() {
         created_at: new Date().toISOString(),
       };
 
+      // Save to supabase
       await apiService.saveInterviewToSupabase(interviewEntry);
-      navigate(`/interview/${interviewEntry.id}`);
 
+      // Navigate to the new interview
+      navigate(`/interview/${interviewEntry.id}`);
       setOpenModal(false);
     } catch (error) {
-      console.log(error);
+      console.error("Error creating interview:", error.message);
+      // Optionally show some error toast
     } finally {
       setIsSubmitting(false);
     }
   };
+
+  // Delete interview
   const handleDeleteInterview = async (interviewId) => {
     try {
       await apiService.deleteInterview(interviewId);
-
-      // Update the state to remove the deleted interview
       setMockInterviews((prev) =>
         prev.filter((interview) => interview.id !== interviewId)
       );
     } catch (error) {
-      console.log(error);
+      console.error("Error deleting interview:", error.message);
+      // Show an error
     }
   };
 
   if (loading) {
-    return (
-      <Box
-        sx={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          backgroundColor: "#000",
-          color: "#fff",
-          flexDirection: "column",
-        }}
-      >
-        <CircularProgress
-          size={80}
-          sx={{
-            color: "#BB86FC", // Matches the theme
-            marginBottom: "1rem",
-          }}
-        />
-        <Typography
-          variant="h6"
-          sx={{
-            color: "#E0E0E0",
-            fontWeight: "bold",
-            textShadow: "0 2px 4px rgba(0,0,0,0.5)",
-          }}
-        >
-          Loading Dashboard...
-        </Typography>
-        <Typography
-          variant="body2"
-          sx={{ color: "#BDBDBD", marginTop: "0.5rem" }}
-        >
-          Please wait while we prepare your data.
-        </Typography>
-      </Box>
-    );
+    return <LoadingScreen />;
   }
 
   return (
-    <div>
-      <div style={{ backgroundColor: "#000", color: "#fff" }}>
-        <div style={{ maxWidth: "1300px", margin: "0 auto", padding: "3rem" }}>
-          <Typography variant="h4">
-            Welcome, {profile?.first_name || "User"}!
-          </Typography>
+    <div style={{ backgroundColor: "#000", color: "#fff", overflow: "auto" }}>
+      <div style={{ maxWidth: "1300px", margin: "0 auto", padding: "3rem" }}>
+        <Typography
+          variant="h4"
+          style={{ display: "flex", justifyContent: "space-between" }}
+        >
+          Welcome, {profile?.first_name || "User"}!
+          <div>
+            <AutoAwesomeIcon /> Credits: {profile?.credits}
+          </div>
+        </Typography>
 
-          <Box
-            sx={{
-              marginTop: "2rem",
-              display: "flex",
-              flexDirection: "column",
-              gap: "1rem",
-            }}
+        {/* Create Interview Section */}
+        <Box
+          sx={{
+            marginTop: "2rem",
+            display: "flex",
+            flexDirection: "column",
+            gap: "1rem",
+          }}
+        >
+          <Typography variant="h5">Create Your Interview</Typography>
+          <CreateInterviewCard onClick={handleOpenModal} />
+        </Box>
+
+        {/* Past Interviews Section */}
+        <Box sx={{ marginTop: "3rem" }}>
+          <Typography
+            variant="h5"
+            sx={{ marginBottom: "1rem", color: "#fff", fontWeight: "bold" }}
           >
-            <Typography variant="h5">Create Your Interview</Typography>
-            <Box
-              sx={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                backgroundColor: "#1f1f1f",
-                border: "2px dashed #444",
-                borderRadius: "10px",
-                height: "150px",
-                cursor: "pointer",
-                transition: "all 0.3s",
-                "&:hover": { backgroundColor: "#2a2a2a" },
-              }}
-              onClick={handleOpenModal}
-            >
-              <AddCircleOutlineIcon sx={{ fontSize: "3rem", color: "#fff" }} />
-            </Box>
-          </Box>
-
-          <Box sx={{ marginTop: "3rem" }}>
-            <Typography
-              variant="h5"
-              sx={{ marginBottom: "1rem", color: "#fff", fontWeight: "bold" }}
-            >
-              Previous Mock Interviews
-            </Typography>
-            {mockInterviews.length === 0 ? (
-              <Typography variant="body2" sx={{ color: "#ccc" }}>
-                No mock interviews available yet. Start by creating your first
-                interview!
-              </Typography>
-            ) : (
-              <Box sx={{ marginTop: "1rem", borderTop: "1px solid #444" }}>
-                {mockInterviews.map((interview) => (
-                  <Box
-                    key={interview.id}
-                    sx={{
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "space-between",
-                      padding: "1rem 0",
-                      borderBottom: "1px solid #444",
-                      transition: "all 0.3s ease",
-                      "&:hover": {
-                        backgroundColor: "#1f1f1f",
-                      },
-                    }}
-                  >
-                    {/* Interview Details */}
-                    <Box
-                      sx={{
-                        display: "flex",
-                        alignItems: "center",
-                        flex: 1,
-                        paddingLeft: "1rem",
-                        gap: "2rem", // Adds space between items
-                      }}
-                      onClick={() =>
-                        navigate(`/interview/${interview.id}/feedback`)
-                      }
-                      style={{ cursor: "pointer" }}
-                    >
-                      <Typography
-                        variant="h6"
-                        sx={{
-                          fontWeight: "bold",
-                          color: "#fff",
-                          flex: 1,
-                          maxWidth: "30%",
-                          textOverflow: "ellipsis",
-                          overflow: "hidden",
-                          whiteSpace: "nowrap",
-                        }}
-                      >
-                        {interview.position_title}
-                      </Typography>
-
-                      <Typography
-                        variant="body2"
-                        sx={{
-                          color: "#ccc",
-                          flex: "1",
-                          maxWidth: "20%",
-                          textOverflow: "ellipsis",
-                          overflow: "hidden",
-                          whiteSpace: "nowrap",
-                        }}
-                      >
-                        Level: {interview.experience_level}
-                      </Typography>
-
-                      <Typography
-                        variant="body2"
-                        sx={{
-                          color: "#666",
-                          flex: "1",
-                          maxWidth: "20%",
-                          textOverflow: "ellipsis",
-                          overflow: "hidden",
-                          whiteSpace: "nowrap",
-                        }}
-                      >
-                        Created:{" "}
-                        {new Date(interview.created_at).toLocaleDateString()}
-                      </Typography>
-                    </Box>
-                    {/* Delete Button */}
-                    <Box sx={{ marginRight: "5rem" }}>
-                      <Typography
-                        variant="body2"
-                        sx={{
-                          color: "#666",
-                          cursor: "pointer",
-                          fontWeight: "bold",
-                        }}
-                        onClick={() => handleDeleteInterview(interview.id)}
-                      >
-                        X
-                      </Typography>
-                    </Box>
-                  </Box>
-                ))}
-              </Box>
-            )}
-          </Box>
-        </div>
-        <AddInterviewModal
-          open={openModal}
-          onClose={handleCloseModal}
-          onSubmit={handleAddInterview}
-          isSubmitting={isSubmitting}
-        />
+            Previous Mock Interviews
+          </Typography>
+          <InterviewList
+            interviews={mockInterviews}
+            onNavigate={navigate}
+            onDelete={handleDeleteInterview}
+          />
+        </Box>
       </div>
+
+      {/* Modal */}
+      <AddInterviewModal
+        open={openModal}
+        onClose={handleCloseModal}
+        onSubmit={handleAddInterview}
+        isSubmitting={isSubmitting}
+      />
     </div>
   );
 }

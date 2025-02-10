@@ -75,6 +75,8 @@ export default function HomePage() {
           id: user.id,
           first_name: firstName,
           last_name: lastName,
+          credits: 0,
+          plan: "starter",
         });
         if (profileError) {
           toast.error("Failed to create profile. Please try again.");

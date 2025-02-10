@@ -81,12 +81,29 @@ app.http("generateQuestions", {
       context.log("Generated Mock Response:", mockResponse);
       return { status: 200, body: mockResponse };
     } catch (error) {
-      context.log("ERROR: Failed to call Azure OpenAI API:", error.message);
+      context.log("ERROR: Failed to call Azure OpenAI API");
+
+      // Log detailed error information
+      if (error.response) {
+        // The API responded with a status code outside the 2xx range
+        context.log("Response Status:", error.response.status);
+        context.log("Response Headers:", error.response.headers);
+        context.log("Response Data:", error.response.data);
+      } else if (error.request) {
+        // The request was made but no response was received
+        context.log("No response received:", error.request);
+      } else {
+        // Other errors (e.g., configuration or setup)
+        context.log("Error Message:", error.message);
+      }
+
+      // Return detailed error information to the client (for debugging purposes)
       return {
         status: 500,
         body: {
           error: "Failed to generate questions",
           details: error.message,
+          response: error.response ? error.response.data : null,
         },
       };
     }

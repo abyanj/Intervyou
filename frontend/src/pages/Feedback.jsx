@@ -65,7 +65,7 @@ function Feedback() {
     };
 
     fetchFeedbackAndInterviewDetails();
-  }, [id]);
+  }, [id, navigate]);
 
   if (loading) {
     return (

@@ -5,9 +5,11 @@ import {
   useLocation,
   Navigate,
 } from "react-router-dom";
+import React from "react";
 import { useEffect, useState } from "react";
 import { supabase } from "./supabaseClient";
 import HomePage from "./pages/HomePage.jsx";
+import apiService from "./services/apiService.js";
 import Dashboard from "./pages/Dashboard";
 import "./App.css";
 import Interview from "./pages/Interview.jsx";
@@ -17,18 +19,23 @@ import ResponsiveAppBar from "./components/ResponsiveAppBar.jsx";
 import HowItWorks from "./pages/HowItWorks.jsx";
 import NotFound from "./pages/NotFound.jsx";
 import Upgrade from "./pages/Upgrade.jsx";
+import Success from "./pages/Success.jsx";
+import Cancel from "./pages/Cancel.jsx";
 
 // Component to enforce authentication
 // eslint-disable-next-line react/prop-types
 const ProtectedRoute = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [currentPlan, setCurrentPlan] = useState(null);
 
   useEffect(() => {
     const checkAuth = async () => {
       const {
         data: { user },
       } = await supabase.auth.getUser();
+      const profileData = await apiService.getUserProfile(user.id);
+      setCurrentPlan(profileData.plan); // Set the current plan (e.g., "Starter", "Pro")
       if (user) {
         setIsAuthenticated(true);
       }
@@ -54,7 +61,11 @@ const ProtectedRoute = ({ children }) => {
     );
   }
 
-  return isAuthenticated ? children : <Navigate to="/" />;
+  return isAuthenticated ? (
+    React.cloneElement(children, { currentPlan })
+  ) : (
+    <Navigate to="/" />
+  );
 };
 
 function App() {
@@ -73,6 +84,22 @@ function App() {
           element={
             <ProtectedRoute>
               <Dashboard />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/success"
+          element={
+            <ProtectedRoute>
+              <Success />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/cancel"
+          element={
+            <ProtectedRoute>
+              <Cancel />
             </ProtectedRoute>
           }
         />
