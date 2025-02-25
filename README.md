@@ -100,14 +100,6 @@ IntervYOU is a cutting-edge web platform designed to help users prepare for job 
 - **Email**: [abyanjaigirdar@hotmail.com](mailto:abyanjaigirdar@hotmail.com)
 - **Role**: Full-Stack Developer
 
-**Yumna Hoque**
-- **Email**: [yumnahoque@cmail.carleton.ca]
-- **Role**: Front-end Developer
-- 
-**Aryan Jaigirdar**
-- **Email**: [jaigirdar.aryan@gmail.com]
-- **Role**: Front-end Developer
-
 IntervYOU was created to empower job seekers with AI-driven tools to excel in their interviews.
 
 ---
